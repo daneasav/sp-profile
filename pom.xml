@@ -133,16 +133,27 @@
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>9.3.14.v20161028</version>
                 <configuration>
+                    <systemProperties>
+                        <systemProperty>
+                            <name>org.slf4j.simpleLogger.defaultLogLevel</name>
+                            <value>trace</value>
+                        </systemProperty>
+                    </systemProperties>
+
                     <scanIntervalSeconds>2</scanIntervalSeconds>
 
                     <webApp>
                         <contextPath>/opensaml</contextPath>
                     </webApp>
+                    <httpConnector>
+                        <!--host>localhost</host-->
+                        <port>8080</port>
+                    </httpConnector>
+
                     <contextXml>${project.basedir}/jetty-context.xml</contextXml>
                 </configuration>
             </plugin>
         </plugins>
     </build>
-
 
 </project>

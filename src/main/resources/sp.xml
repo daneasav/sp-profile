@@ -1,19 +1,18 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<EntityDescriptor entityID="http://localhost:8080/opensaml/despick" xmlns="urn:oasis:names:tc:SAML:2.0:metadata">
+<EntityDescriptor entityID="http://localhost:5080/fedlet/despick" xmlns="urn:oasis:names:tc:SAML:2.0:metadata">
     <SPSSODescriptor AuthnRequestsSigned="false" WantAssertionsSigned="false"
                      protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
         <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
-                             Location="http://localhost:8080/opensaml/sloRedirect"
-                             ResponseLocation="http://localhost:8080/opensaml/sloRedirect"/>
+                             Location="http://localhost:5080/fedlet/fedletSloProcessor"
+                             ResponseLocation="http://localhost:5080/fedlet/fedletSloProcessor"/>
         <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
-                             Location="http://localhost:8080/opensaml/sloPost"
-                             ResponseLocation="http://localhost:8080/opensaml/sloPost"/>
+                             Location="http://localhost:5080/fedlet/fedletSloProcessor"
+                             ResponseLocation="http://localhost:5080/fedlet/fedletSloProcessor"/>
         <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP"
-                             Location="http://localhost:8080/opensaml/sloSoap"/>
+                             Location="http://localhost:5080/fedlet/fedletSloSoap"/>
         <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</NameIDFormat>
         <AssertionConsumerService isDefault="true" index="0" Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
-                                  Location="http://localhost:8080/opensaml/acsPost"/>
+                                  Location="http://localhost:5080/fedlet/assertionConsumerService"/>
         <AssertionConsumerService index="1" Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact"
-                                  Location="http://localhost:8080/opensaml/acsArtifact"/>
+                                  Location="http://localhost:5080/fedlet/assertionConsumerService"/>
     </SPSSODescriptor>
 </EntityDescriptor>
