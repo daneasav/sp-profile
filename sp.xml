@@ -4,11 +4,11 @@
                      protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
         <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
                              Location="http://localhost:8080/opensaml/sloRedirect"
-                             ResponseLocation="http://localhost:8080/opensaml/sloRedirect"/>
+                             ResponseLocation="http://localhost:8080/opensaml/sloRedirectResponse"/>
         <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
-                             Location="http://localhost:8080/opensaml/sloPost"
-                             ResponseLocation="http://localhost:8080/opensaml/sloPost"/>
-        <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP"
+                             Location="http://localhost:8080/opensaml/sloPostResponse"
+                             ResponseLocation="http://localhost:8080/opensaml/sloPostResponse"/>
+        <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAPResponse"
                              Location="http://localhost:8080/opensaml/sloSoap"/>
         <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</NameIDFormat>
         <AssertionConsumerService isDefault="true" index="0" Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
