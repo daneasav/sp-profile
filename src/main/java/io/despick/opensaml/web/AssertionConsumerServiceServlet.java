@@ -1,10 +1,14 @@
 package io.despick.opensaml.web;
 
 import io.despick.opensaml.init.SamlMetadata;
-import io.despick.opensaml.saml.SingleSignOn;
+import io.despick.opensaml.saml.SAMLUtil;
+import io.despick.opensaml.saml.UserSession;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder;
 import org.joda.time.DateTime;
+import org.opensaml.core.xml.XMLObject;
+import org.opensaml.core.xml.schema.XSString;
+import org.opensaml.core.xml.schema.impl.XSAnyImpl;
 import org.opensaml.messaging.context.InOutOperationContext;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.encoder.MessageEncodingException;
@@ -64,7 +68,65 @@ public class AssertionConsumerServiceServlet extends HttpServlet {
         validateDestinationAndLifetime(artifactResponse, request);
         //verifyAssertionSignature(artifactResponse.getMessage());
 
-        request.getSession().setAttribute(AuthFilter.AUTHENTICATED_SESSION_ATTRIBUTE, "");
+        UserSession userSession = new UserSession();
+        if (Response.DEFAULT_ELEMENT_LOCAL_NAME.equals(artifactResponse.getMessage().getElementQName().getLocalPart())) {
+            if (artifactResponse.getMessage().hasChildren()) {
+                // get the first one since the IDP only sends one assertion
+                Response samlResponse = (Response) artifactResponse.getMessage();
+
+                //TODO check the number of assertions
+                if (samlResponse.getAssertions().size() == 1) {
+                    Assertion assertion = samlResponse.getAssertions().get(0);
+
+                    // remove nameid from the dom
+                    assertion.getSubject().getNameID().detach();
+
+                    userSession.setSamlNameID(assertion.getSubject().getNameID());
+
+                    for (AttributeStatement attributeStatement : assertion.getAttributeStatements()) {
+                        for (Attribute attribute : attributeStatement.getAttributes()) {
+                            List<XMLObject> attributeValues = attribute.getAttributeValues();
+
+                            if (!attributeValues.isEmpty()) {
+                                switch (attribute.getName()) {
+                                    case "SSOToken":
+                                        userSession.setSsoToken(getAttributeValue(attributeValues.get(0)));
+                                        break;
+                                    case "AuthLevel":
+                                        userSession.setAuthLevel(Integer.parseInt(getAttributeValue(attributeValues.get(0))));
+                                        break;
+                                    case "HMGUSERID":
+                                        userSession.setUserID(getAttributeValue(attributeValues.get(0)));
+                                        break;
+                                    case "huid":
+                                        userSession.setHssiID(getAttributeValue(attributeValues.get(0)));
+                                        break;
+                                    case "Salutation":
+                                        userSession.setSalutation(getAttributeValue(attributeValues.get(0)));
+                                        break;
+                                    case "FirstName":
+                                        userSession.setFirstName(getAttributeValue(attributeValues.get(0)));
+                                        break;
+                                    case "LastName":
+                                        userSession.setLastName(getAttributeValue(attributeValues.get(0)));
+                                        break;
+                                    case "Email":
+                                        userSession.setEmail(getAttributeValue(attributeValues.get(0)));
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                    // TODO only one authn statement is expected
+                    if (assertion.getAuthnStatements().size() == 1) {
+                        userSession.setSamlSessionIndex(assertion.getAuthnStatements().get(0).getSessionIndex());
+                    }
+                }
+
+            }
+        }
+
+        request.getSession().setAttribute(AuthFilter.AUTHENTICATED_SESSION_ATTRIBUTE, userSession);
 
         try {
             response.sendRedirect("/opensaml/index");
@@ -73,20 +135,20 @@ public class AssertionConsumerServiceServlet extends HttpServlet {
         }
     }
 
-    private Artifact buildArtifactFromRequest(final HttpServletRequest req) {
-        Artifact artifact = SingleSignOn.buildSAMLObject(Artifact.class);
-        artifact.setArtifact(req.getParameter(SAMLART_QUERY_PARAMETER));
+    private Artifact buildArtifactFromRequest(final HttpServletRequest request) {
+        Artifact artifact = SAMLUtil.buildSAMLObject(Artifact.class);
+        artifact.setArtifact(request.getParameter(SAMLART_QUERY_PARAMETER));
         return artifact;
     }
 
     private ArtifactResolve buildArtifactResolve(final Artifact artifact) {
-        Issuer issuer = SingleSignOn.buildSAMLObject(Issuer.class);
+        Issuer issuer = SAMLUtil.buildSAMLObject(Issuer.class);
         issuer.setValue(SamlMetadata.spDescriptor.getEntityID());
 
-        ArtifactResolve artifactResolve = SingleSignOn.buildSAMLObject(ArtifactResolve.class);
+        ArtifactResolve artifactResolve = SAMLUtil.buildSAMLObject(ArtifactResolve.class);
         artifactResolve.setIssuer(issuer);
         artifactResolve.setIssueInstant(new DateTime());
-        artifactResolve.setID(SamlMetadata.secureRandomIdGenerator.generateIdentifier());
+        artifactResolve.setID(SAMLUtil.secureRandomIdGenerator.generateIdentifier());
         artifactResolve.setDestination(
             getIDPArtifactResolutionService(SamlMetadata.idpDescriptor.getIDPSSODescriptor(SAMLConstants.SAML20P_NS)));
         artifactResolve.setArtifact(artifact);
@@ -114,6 +176,8 @@ public class AssertionConsumerServiceServlet extends HttpServlet {
             InOutOperationContext<ArtifactResponse, ArtifactResolve> context = new ProfileRequestContext<>();
             context.setOutboundMessageContext(artifactMessageContext);
 
+            HttpClientBuilder clientBuilder = new HttpClientBuilder();
+
             AbstractPipelineHttpSOAPClient<SAMLObject, SAMLObject> soapClient = new AbstractPipelineHttpSOAPClient() {
                 @Override
                 protected HttpClientMessagePipeline<SAMLObject, SAMLObject> newPipeline() {
@@ -127,8 +191,6 @@ public class AssertionConsumerServiceServlet extends HttpServlet {
                     return pipeline;
                 }
             };
-
-            HttpClientBuilder clientBuilder = new HttpClientBuilder();
 
             soapClient.setHttpClient(clientBuilder.buildClient());
             soapClient.send(getIDPArtifactResolutionService(
@@ -197,4 +259,20 @@ public class AssertionConsumerServiceServlet extends HttpServlet {
             e.printStackTrace();
         }
     }*/
+
+    private String getAttributeValue(XMLObject attributeValue) {
+        return attributeValue == null ? null :
+            attributeValue instanceof XSString ? getStringAttributeValue((XSString) attributeValue) :
+                attributeValue instanceof XSAnyImpl ? getAnyAttributeValue((XSAnyImpl) attributeValue) :
+                    attributeValue.toString();
+    }
+
+    private String getStringAttributeValue(XSString attributeValue) {
+        return attributeValue.getValue();
+    }
+
+    private String getAnyAttributeValue(XSAnyImpl attributeValue) {
+        return attributeValue.getTextContent();
+    }
+
 }

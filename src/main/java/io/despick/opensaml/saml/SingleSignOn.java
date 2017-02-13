@@ -2,13 +2,10 @@ package io.despick.opensaml.saml;
 
 import io.despick.opensaml.init.SamlMetadata;
 import org.joda.time.DateTime;
-import org.opensaml.core.xml.XMLObjectBuilderFactory;
-import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.*;
 import org.opensaml.saml.saml2.metadata.*;
 
-import javax.xml.namespace.QName;
 import java.util.List;
 
 /**
@@ -26,34 +23,19 @@ public class SingleSignOn {
 
     //SAMLConstants.SAML2_ARTIFACT_BINDING_URI
     private AuthnRequest buildAuthnRequest(String requestBinding, String responseBinding, String authnContext, AuthnContextComparisonTypeEnumeration criteria) {
-        AuthnRequest authnRequest = buildSAMLObject(AuthnRequest.class);
+        AuthnRequest authnRequest = SAMLUtil.buildSAMLObject(AuthnRequest.class);
+        authnRequest.setID(SAMLUtil.secureRandomIdGenerator.generateIdentifier());
         authnRequest.setIssueInstant(new DateTime());
         authnRequest.setDestination(getIDPDestinationByBinding(
             SamlMetadata.idpDescriptor.getIDPSSODescriptor(SAMLConstants.SAML20P_NS), requestBinding));
+        authnRequest.setIssuer(buildSPIssuer(SamlMetadata.spDescriptor));
         authnRequest.setProtocolBinding(responseBinding);
         authnRequest.setAssertionConsumerServiceURL(getAssertionConsumerEndpoint(
             SamlMetadata.spDescriptor.getSPSSODescriptor(SAMLConstants.SAML20P_NS), responseBinding));
-        authnRequest.setID(SamlMetadata.secureRandomIdGenerator.generateIdentifier());
-        authnRequest.setIssuer(buildSPIssuer(SamlMetadata.spDescriptor));
         authnRequest.setNameIDPolicy(buildTransientNameIdPolicy());
         authnRequest.setRequestedAuthnContext(buildRequestedAuthnContext(authnContext, criteria));
 
         return authnRequest;
-    }
-
-    public static <T> T buildSAMLObject(final Class<T> clazz) {
-        T object;
-        try {
-            XMLObjectBuilderFactory builderFactory = XMLObjectProviderRegistrySupport.getBuilderFactory();
-            QName defaultElementName = (QName)clazz.getDeclaredField("DEFAULT_ELEMENT_NAME").get(null);
-            object = (T) builderFactory.getBuilder(defaultElementName).buildObject(defaultElementName);
-        } catch (IllegalAccessException e) {
-            throw new IllegalArgumentException("Could not create SAML object");
-        } catch (NoSuchFieldException e) {
-            throw new IllegalArgumentException("Could not create SAML object");
-        }
-
-        return object;
     }
 
     private String getIDPDestinationByBinding(IDPSSODescriptor idpssoDescriptor, String binding) {
@@ -65,7 +47,6 @@ public class SingleSignOn {
             }
         }
 
-        // TODO: return fallback binding
         return null;
     }
 
@@ -83,14 +64,14 @@ public class SingleSignOn {
     }
 
     private Issuer buildSPIssuer(EntityDescriptor entityDescriptor) {
-        Issuer issuer = buildSAMLObject(Issuer.class);
+        Issuer issuer = SAMLUtil.buildSAMLObject(Issuer.class);
         issuer.setValue(entityDescriptor.getEntityID());
 
         return issuer;
     }
 
     private NameIDPolicy buildTransientNameIdPolicy() {
-        NameIDPolicy nameIDPolicy = buildSAMLObject(NameIDPolicy.class);
+        NameIDPolicy nameIDPolicy = SAMLUtil.buildSAMLObject(NameIDPolicy.class);
         nameIDPolicy.setAllowCreate(true);
 
         nameIDPolicy.setFormat(NameIDType.TRANSIENT);
@@ -99,10 +80,10 @@ public class SingleSignOn {
     }
 
     private RequestedAuthnContext buildRequestedAuthnContext(String authnContext, AuthnContextComparisonTypeEnumeration criteria) {
-        AuthnContextClassRef passwordAuthnContextClassRef = buildSAMLObject(AuthnContextClassRef.class);
+        AuthnContextClassRef passwordAuthnContextClassRef = SAMLUtil.buildSAMLObject(AuthnContextClassRef.class);
         passwordAuthnContextClassRef.setAuthnContextClassRef(authnContext);
 
-        RequestedAuthnContext requestedAuthnContext = buildSAMLObject(RequestedAuthnContext.class);
+        RequestedAuthnContext requestedAuthnContext = SAMLUtil.buildSAMLObject(RequestedAuthnContext.class);
         requestedAuthnContext.setComparison(criteria);
         requestedAuthnContext.getAuthnContextClassRefs().add(passwordAuthnContextClassRef);
 

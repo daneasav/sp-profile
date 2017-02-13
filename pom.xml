@@ -136,7 +136,7 @@
                     <systemProperties>
                         <systemProperty>
                             <name>org.slf4j.simpleLogger.defaultLogLevel</name>
-                            <value>trace</value>
+                            <value>debug</value>
                         </systemProperty>
                     </systemProperties>
 

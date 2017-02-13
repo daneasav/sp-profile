@@ -8,6 +8,4 @@ public class SamlMetadata {
     public static EntityDescriptor spDescriptor;
     public static EntityDescriptor idpDescriptor;
 
-    public static RandomIdentifierGenerationStrategy secureRandomIdGenerator = new RandomIdentifierGenerationStrategy();
-
 }

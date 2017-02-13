@@ -49,8 +49,6 @@ public class AuthFilter implements Filter {
     if (httpServletRequest.getSession().getAttribute(AUTHENTICATED_SESSION_ATTRIBUTE) != null) {
       filterChain.doFilter(request, response);
     } else {
-      httpServletRequest.getSession().setAttribute(AUTHENTICATED_SESSION_ATTRIBUTE, "");
-
       AuthnRequest authnRequest = new SingleSignOn().buildAuthnRequest();
 
       MessageContext context = new MessageContext();
