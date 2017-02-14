@@ -1,6 +1,6 @@
 package io.despick.opensaml.example;
 
-import io.despick.opensaml.saml.UserSession;
+import io.despick.opensaml.saml.session.UserSession;
 import io.despick.opensaml.web.AuthFilter;
 
 import javax.servlet.ServletException;
@@ -9,10 +9,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-
-/**
- * Created by DaneasaV on 21.11.2016.
- */
 
 @WebServlet(name = "indexServlet", urlPatterns = "/index")
 public class IndexServlet extends HttpServlet {

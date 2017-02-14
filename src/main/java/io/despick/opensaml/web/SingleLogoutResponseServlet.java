@@ -1,23 +1,15 @@
 package io.despick.opensaml.web;
 
-import io.despick.opensaml.init.SamlMetadata;
 import io.despick.opensaml.saml.HTTPRedirectSender;
 import io.despick.opensaml.saml.SingleLogout;
-import io.despick.opensaml.saml.UserSession;
+import io.despick.opensaml.saml.session.UserSession;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.MessageDecodingException;
-import org.opensaml.messaging.encoder.MessageEncodingException;
 import org.opensaml.saml.common.SAMLObject;
-import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
-import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPRedirectDeflateDecoder;
-import org.opensaml.saml.saml2.binding.encoding.impl.HTTPRedirectDeflateEncoder;
 import org.opensaml.saml.saml2.core.LogoutRequest;
-import org.opensaml.saml.saml2.metadata.Endpoint;
-import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
-import org.opensaml.saml.saml2.metadata.SingleLogoutService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,10 +19,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-
-/**
- * Created by DaneasaV on 13.02.2017.
- */
 
 @WebServlet(name = "sloResponseServlet", urlPatterns = "/sloRedirect") public class SingleLogoutResponseServlet
     extends HttpServlet {
@@ -56,8 +44,8 @@ import java.io.IOException;
 
         request.getSession().invalidate();
 
-        HTTPRedirectSender.sendLogoutResponseRedirectMessage(response, new SingleLogout().buildLogoutResponse(logoutRequest.getID()),
-            SamlMetadata.idpDescriptor.getIDPSSODescriptor(SAMLConstants.SAML20P_NS), SAMLConstants.SAML2_REDIRECT_BINDING_URI);
+        HTTPRedirectSender.sendLogoutResponseRedirectMessage(response,
+            new SingleLogout().buildLogoutResponse(logoutRequest.getID()), SAMLConstants.SAML2_REDIRECT_BINDING_URI);
     }
 
     private LogoutRequest buildLogoutRequestFromRequest(HttpServletRequest request) {

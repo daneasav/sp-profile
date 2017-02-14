@@ -1,16 +1,11 @@
 package io.despick.opensaml.saml;
 
-import io.despick.opensaml.init.SamlMetadata;
+import io.despick.opensaml.init.IDPMetadata;
+import io.despick.opensaml.init.SPMetadata;
 import org.joda.time.DateTime;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.*;
-import org.opensaml.saml.saml2.metadata.*;
 
-import java.util.List;
-
-/**
- * Created by DaneasaV on 09.02.2017.
- */
 public class SingleSignOn {
 
     public AuthnRequest buildAuthnRequest() {
@@ -25,48 +20,14 @@ public class SingleSignOn {
         AuthnRequest authnRequest = SAMLUtil.buildSAMLObject(AuthnRequest.class);
         authnRequest.setID(SAMLUtil.getRandomID());
         authnRequest.setIssueInstant(new DateTime());
-        authnRequest.setDestination(getIDPDestinationByBinding(
-            SamlMetadata.idpDescriptor.getIDPSSODescriptor(SAMLConstants.SAML20P_NS), requestBinding));
-        authnRequest.setIssuer(buildSPIssuer(SamlMetadata.spDescriptor));
+        authnRequest.setDestination(IDPMetadata.getIDPSSOServiceEndpointByBinding(requestBinding).getLocation());
+        authnRequest.setIssuer(SAMLUtil.buildSPIssuer());
         authnRequest.setProtocolBinding(responseBinding);
-        authnRequest.setAssertionConsumerServiceURL(getAssertionConsumerEndpoint(
-            SamlMetadata.spDescriptor.getSPSSODescriptor(SAMLConstants.SAML20P_NS), responseBinding));
+        authnRequest.setAssertionConsumerServiceURL(SPMetadata.getAssertionConsumerEndpoint(responseBinding));
         authnRequest.setNameIDPolicy(buildTransientNameIdPolicy());
         authnRequest.setRequestedAuthnContext(buildRequestedAuthnContext(authnContext, criteria));
 
         return authnRequest;
-    }
-
-    private String getIDPDestinationByBinding(IDPSSODescriptor idpssoDescriptor, String binding) {
-        List<SingleSignOnService> singleSignOnServices = idpssoDescriptor.getSingleSignOnServices();
-
-        for (SingleSignOnService ssoService : singleSignOnServices) {
-            if (ssoService.getBinding().equals(binding)) {
-                return ssoService.getLocation();
-            }
-        }
-
-        return null;
-    }
-
-    private String getAssertionConsumerEndpoint(SPSSODescriptor spssoDescriptor, String binding) {
-        List<AssertionConsumerService> assertionConsumerServices = spssoDescriptor.getAssertionConsumerServices();
-
-        for (AssertionConsumerService assertionConsumerService : assertionConsumerServices) {
-            if (assertionConsumerService.getBinding().equals(binding)) {
-                return assertionConsumerService.getLocation();
-            }
-        }
-
-        // TODO: return fallback binding
-        return null;
-    }
-
-    private Issuer buildSPIssuer(EntityDescriptor entityDescriptor) {
-        Issuer issuer = SAMLUtil.buildSAMLObject(Issuer.class);
-        issuer.setValue(entityDescriptor.getEntityID());
-
-        return issuer;
     }
 
     private NameIDPolicy buildTransientNameIdPolicy() {

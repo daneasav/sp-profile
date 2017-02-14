@@ -1,6 +1,5 @@
 package io.despick.opensaml.web;
 
-import io.despick.opensaml.init.SamlMetadata;
 import io.despick.opensaml.saml.HTTPRedirectSender;
 import io.despick.opensaml.saml.SingleSignOn;
 import org.opensaml.saml.common.xml.SAMLConstants;
@@ -23,7 +22,6 @@ public class AuthFilter implements Filter {
 
   @Override
   public void init(FilterConfig filterConfig) throws ServletException {
-
   }
 
   @Override
@@ -39,12 +37,12 @@ public class AuthFilter implements Filter {
       AuthnRequest authnRequest = new SingleSignOn().buildAuthnRequest();
 
       HTTPRedirectSender.sendAuthnRequestRedirectMessage(httpServletResponse, authnRequest,
-          SamlMetadata.idpDescriptor.getIDPSSODescriptor(SAMLConstants.SAML20P_NS), SAMLConstants.SAML2_REDIRECT_BINDING_URI);
+          SAMLConstants.SAML2_REDIRECT_BINDING_URI);
     }
   }
 
   @Override
   public void destroy() {
-
   }
+
 }

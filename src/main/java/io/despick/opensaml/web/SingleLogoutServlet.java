@@ -16,10 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-/**
- * Created by DaneasaV on 13.02.2017.
- */
-
 @WebServlet(name = "sloServlet", urlPatterns = "/sloRedirectResponse")
 public class SingleLogoutServlet extends HttpServlet {
 

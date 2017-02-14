@@ -1,16 +1,11 @@
 package io.despick.opensaml.saml;
 
-import io.despick.opensaml.init.SamlMetadata;
+import io.despick.opensaml.init.IDPMetadata;
+import io.despick.opensaml.saml.session.UserSession;
 import org.joda.time.DateTime;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.*;
-import org.opensaml.saml.saml2.metadata.EntityDescriptor;
-import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
-import org.opensaml.saml.saml2.metadata.SingleLogoutService;
 
-/**
- * Created by DaneasaV on 13.02.2017.
- */
 public class SingleLogout {
 
     public LogoutResponse buildLogoutResponse(String requestID) {
@@ -22,10 +17,8 @@ public class SingleLogout {
         logoutResponse.setID(SAMLUtil.getRandomID());
         logoutResponse.setInResponseTo(requestID);
         logoutResponse.setIssueInstant(new DateTime());
-        logoutResponse.setDestination(getIDPResponseDestinationByBinding(
-                SamlMetadata.idpDescriptor.getIDPSSODescriptor(SAMLConstants.SAML20P_NS),
-                requestBinding));
-        logoutResponse.setIssuer(buildSPIssuer(SamlMetadata.spDescriptor));
+        logoutResponse.setDestination(IDPMetadata.getIDPSLOServiceEndpointByBinding(requestBinding).getResponseLocation());
+        logoutResponse.setIssuer(SAMLUtil.buildSPIssuer());
         logoutResponse.setStatus(buildSuccessStatus());
 
         return logoutResponse;
@@ -39,41 +32,12 @@ public class SingleLogout {
         LogoutRequest logoutRequest = SAMLUtil.buildSAMLObject(LogoutRequest.class);
         logoutRequest.setID(SAMLUtil.getRandomID());
         logoutRequest.setIssueInstant(new DateTime());
-        logoutRequest.setDestination(getIDPDestinationByBinding(
-            SamlMetadata.idpDescriptor.getIDPSSODescriptor(SAMLConstants.SAML20P_NS),
-            requestBinding));
-        logoutRequest.setIssuer(buildSPIssuer(SamlMetadata.spDescriptor));
+        logoutRequest.setDestination(IDPMetadata.getIDPSLOServiceEndpointByBinding(requestBinding).getLocation());
+        logoutRequest.setIssuer(SAMLUtil.buildSPIssuer());
         logoutRequest.setNameID(buildNameID(userSession));
         logoutRequest.getSessionIndexes().add(buildSessionIndex(userSession));
 
         return logoutRequest;
-    }
-
-    private Issuer buildSPIssuer(EntityDescriptor entityDescriptor) {
-        Issuer issuer = SAMLUtil.buildSAMLObject(Issuer.class);
-        issuer.setValue(entityDescriptor.getEntityID());
-
-        return issuer;
-    }
-
-    private String getIDPDestinationByBinding(IDPSSODescriptor idpssoDescriptor, String requestBinding) {
-        for (SingleLogoutService sloService : idpssoDescriptor.getSingleLogoutServices()) {
-            if (sloService.getBinding().equals(requestBinding)) {
-                return sloService.getLocation();
-            }
-        }
-
-        return null;
-    }
-
-    private String getIDPResponseDestinationByBinding(IDPSSODescriptor idpssoDescriptor, String requestBinding) {
-        for (SingleLogoutService sloService : idpssoDescriptor.getSingleLogoutServices()) {
-            if (sloService.getBinding().equals(requestBinding)) {
-                return sloService.getResponseLocation();
-            }
-        }
-
-        return null;
     }
 
     private SessionIndex buildSessionIndex(UserSession userSession) {

@@ -1,14 +1,13 @@
 package io.despick.opensaml.saml;
 
+import io.despick.opensaml.init.SPMetadata;
 import net.shibboleth.utilities.java.support.security.RandomIdentifierGenerationStrategy;
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.saml.saml2.core.Issuer;
 
 import javax.xml.namespace.QName;
 
-/**
- * Created by DaneasaV on 13.02.2017.
- */
 public class SAMLUtil {
 
     private static final RandomIdentifierGenerationStrategy secureRandomIdGenerator = new RandomIdentifierGenerationStrategy();
@@ -30,6 +29,13 @@ public class SAMLUtil {
         }
 
         return object;
+    }
+
+    public static Issuer buildSPIssuer() {
+        Issuer issuer = SAMLUtil.buildSAMLObject(Issuer.class);
+        issuer.setValue(SPMetadata.getInstance().getEntityID());
+
+        return issuer;
     }
 
 }

@@ -1,10 +1,7 @@
-package io.despick.opensaml.saml;
+package io.despick.opensaml.saml.session;
 
 import org.opensaml.saml.saml2.core.NameID;
 
-/**
- * Created by DaneasaV on 13.02.2017.
- */
 public class UserSession {
 
     // SAML specific attributes

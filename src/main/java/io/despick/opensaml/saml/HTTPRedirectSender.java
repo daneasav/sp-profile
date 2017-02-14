@@ -1,6 +1,6 @@
 package io.despick.opensaml.saml;
 
-import io.despick.opensaml.error.SAMLClientException;
+import io.despick.opensaml.init.IDPMetadata;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.encoder.MessageEncodingException;
@@ -12,34 +12,26 @@ import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.core.LogoutResponse;
 import org.opensaml.saml.saml2.metadata.Endpoint;
-import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
-import org.opensaml.saml.saml2.metadata.SingleLogoutService;
-import org.opensaml.saml.saml2.metadata.SingleSignOnService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletResponse;
 
-/**
- * Created by DaneasaV on 13.02.2017.
- */
 public class HTTPRedirectSender {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(HTTPRedirectSender.class);
 
-    public static void sendAuthnRequestRedirectMessage(HttpServletResponse response, AuthnRequest authnRequest,
-        IDPSSODescriptor idpssoDescriptor, String binding) {
-        sendRedirectMessage(response, authnRequest, getIDPSSOServiceEndpointByBinding(idpssoDescriptor, binding));
+    public static void sendAuthnRequestRedirectMessage(HttpServletResponse response, AuthnRequest authnRequest, String binding) {
+        sendRedirectMessage(response, authnRequest, IDPMetadata.getIDPSSOServiceEndpointByBinding(binding));
     }
 
-    public static void sendLogoutRequestRedirectMessage(HttpServletResponse response, LogoutRequest logoutRequest,
-        IDPSSODescriptor idpssoDescriptor, String binding) {
-        sendRedirectMessage(response, logoutRequest, getIDPSLOServiceEndpointByBinding(idpssoDescriptor, binding));
+    public static void sendLogoutRequestRedirectMessage(HttpServletResponse response, LogoutRequest logoutRequest, String binding) {
+        sendRedirectMessage(response, logoutRequest, IDPMetadata.getIDPSLOServiceEndpointByBinding(binding));
     }
 
-    public static void sendLogoutResponseRedirectMessage(HttpServletResponse response, LogoutResponse logoutResponse,
-        IDPSSODescriptor idpssoDescriptor, String binding) {
-        sendRedirectMessage(response, logoutResponse, getIDPSLOServiceEndpointByBinding(idpssoDescriptor, binding));
+    public static void sendLogoutResponseRedirectMessage(HttpServletResponse response, LogoutResponse logoutResponse, String binding) {
+        sendRedirectMessage(response, logoutResponse, IDPMetadata.getIDPSLOServiceEndpointByBinding(binding));
     }
 
     private static void sendRedirectMessage(HttpServletResponse response, SAMLObject message, Endpoint endpoint) {
@@ -68,28 +60,6 @@ public class HTTPRedirectSender {
         } catch (MessageEncodingException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private static Endpoint getIDPSSOServiceEndpointByBinding(IDPSSODescriptor idpssoDescriptor, String binding) {
-        for (SingleSignOnService ssoService : idpssoDescriptor.getSingleSignOnServices()) {
-            if (ssoService.getBinding().equals(binding)) {
-                return ssoService;
-            }
-        }
-
-        LOGGER.error("IDP SSO Service was not found for {0} binding", binding);
-        throw new SAMLClientException("IDP SSO Service was not found for " + binding + " binding");
-    }
-
-    private static Endpoint getIDPSLOServiceEndpointByBinding(IDPSSODescriptor idpssoDescriptor, String binding) {
-        for (SingleLogoutService singleLogoutService : idpssoDescriptor.getSingleLogoutServices()) {
-            if (singleLogoutService.getBinding().equals(binding)) {
-                return singleLogoutService;
-            }
-        }
-
-        LOGGER.error("IDP SLO Service was not found for {0} binding", binding);
-        throw new SAMLClientException("IDP SLO Service was not found for " + binding + " binding");
     }
 
 }
