@@ -1,11 +1,6 @@
 package io.despick.opensaml.web;
 
 import io.despick.opensaml.saml.HTTPRedirectDecoder;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import org.opensaml.messaging.context.MessageContext;
-import org.opensaml.messaging.decoder.MessageDecodingException;
-import org.opensaml.saml.common.SAMLObject;
-import org.opensaml.saml.saml2.binding.decoding.impl.HTTPRedirectDeflateDecoder;
 import org.opensaml.saml.saml2.core.LogoutResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
