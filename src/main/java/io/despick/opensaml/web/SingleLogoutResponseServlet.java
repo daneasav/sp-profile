@@ -1,5 +1,6 @@
 package io.despick.opensaml.web;
 
+import io.despick.opensaml.saml.HTTPRedirectDecoder;
 import io.despick.opensaml.saml.HTTPRedirectSender;
 import io.despick.opensaml.saml.SingleLogout;
 import io.despick.opensaml.saml.session.UserSession;
@@ -27,7 +28,7 @@ import java.io.IOException;
 
     @Override protected void doGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
-        LogoutRequest logoutRequest = buildLogoutRequestFromRequest(request);
+        LogoutRequest logoutRequest = HTTPRedirectDecoder.buildLogoutRequestFromRequest(request);
 
         if (request.getSession().getAttribute(AuthFilter.AUTHENTICATED_SESSION_ATTRIBUTE) != null) {
             UserSession userSession = (UserSession) request.getSession().getAttribute(AuthFilter.AUTHENTICATED_SESSION_ATTRIBUTE);
@@ -46,29 +47,6 @@ import java.io.IOException;
 
         HTTPRedirectSender.sendLogoutResponseRedirectMessage(response,
             new SingleLogout().buildLogoutResponse(logoutRequest.getID()), SAMLConstants.SAML2_REDIRECT_BINDING_URI);
-    }
-
-    private LogoutRequest buildLogoutRequestFromRequest(HttpServletRequest request) {
-        HTTPRedirectDeflateDecoder decoder = new HTTPRedirectDeflateDecoder();
-        decoder.setHttpServletRequest(request);
-        try {
-            decoder.initialize();
-        } catch (ComponentInitializationException e) {
-            LOGGER.error("Exception initializing the decoder for saml response ", e);
-        }
-
-        try {
-            decoder.decode();
-        } catch (MessageDecodingException e) {
-            LOGGER.error("Exception while decoding saml response ", e);
-        }
-
-        MessageContext<SAMLObject> messageContext = decoder.getMessageContext();
-        if (LogoutRequest.DEFAULT_ELEMENT_LOCAL_NAME.equals(messageContext.getMessage().getElementQName().getLocalPart())) {
-            return (LogoutRequest) messageContext.getMessage();
-        }
-
-        return null;
     }
 
 }

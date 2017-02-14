@@ -1,5 +1,6 @@
 package io.despick.opensaml.web;
 
+import io.despick.opensaml.saml.HTTPRedirectDecoder;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.MessageDecodingException;
@@ -22,9 +23,8 @@ public class SingleLogoutServlet extends HttpServlet {
     private static Logger LOGGER = LoggerFactory.getLogger(SingleLogoutServlet.class);
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException,
-        IOException {
-        LogoutResponse logoutResponse = buildLogoutResponseFromRequest(request);
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        LogoutResponse logoutResponse = HTTPRedirectDecoder.buildLogoutResponseFromRequest(request);
 
         if (logoutResponse.getStatus().getStatusCode().getValue().endsWith("Success")) {
             LOGGER.info("invalidate session " + request.getSession().getId());
@@ -37,29 +37,6 @@ public class SingleLogoutServlet extends HttpServlet {
         } else {
             LOGGER.error("logout response was not success.");
         }
-    }
-
-    private LogoutResponse buildLogoutResponseFromRequest(HttpServletRequest request) {
-        HTTPRedirectDeflateDecoder decoder = new HTTPRedirectDeflateDecoder();
-        decoder.setHttpServletRequest(request);
-        try {
-            decoder.initialize();
-        } catch (ComponentInitializationException e) {
-            LOGGER.error("Exception initializing the decoder for saml response ", e);
-        }
-
-        try {
-            decoder.decode();
-        } catch (MessageDecodingException e) {
-            LOGGER.error("Exception while decoding saml response ", e);
-        }
-
-        MessageContext<SAMLObject> messageContext = decoder.getMessageContext();
-        if (LogoutResponse.DEFAULT_ELEMENT_LOCAL_NAME.equals(messageContext.getMessage().getElementQName().getLocalPart())) {
-            return (LogoutResponse) messageContext.getMessage();
-        }
-
-        return null;
     }
 
 }
