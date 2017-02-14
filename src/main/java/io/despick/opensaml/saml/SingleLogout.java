@@ -7,9 +7,6 @@ import org.opensaml.saml.saml2.core.*;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.SingleLogoutService;
-import org.opensaml.saml.saml2.metadata.SingleSignOnService;
-
-import java.util.List;
 
 /**
  * Created by DaneasaV on 13.02.2017.
@@ -22,7 +19,7 @@ public class SingleLogout {
 
     public LogoutResponse buildLogoutResponse(String requestID, String requestBinding) {
         LogoutResponse logoutResponse = SAMLUtil.buildSAMLObject(LogoutResponse.class);
-        logoutResponse.setID(SAMLUtil.secureRandomIdGenerator.generateIdentifier());
+        logoutResponse.setID(SAMLUtil.getRandomID());
         logoutResponse.setInResponseTo(requestID);
         logoutResponse.setIssueInstant(new DateTime());
         logoutResponse.setDestination(getIDPResponseDestinationByBinding(
@@ -40,7 +37,7 @@ public class SingleLogout {
 
     public LogoutRequest buildLogoutRequest(UserSession userSession, String requestBinding) {
         LogoutRequest logoutRequest = SAMLUtil.buildSAMLObject(LogoutRequest.class);
-        logoutRequest.setID(SAMLUtil.secureRandomIdGenerator.generateIdentifier());
+        logoutRequest.setID(SAMLUtil.getRandomID());
         logoutRequest.setIssueInstant(new DateTime());
         logoutRequest.setDestination(getIDPDestinationByBinding(
             SamlMetadata.idpDescriptor.getIDPSSODescriptor(SAMLConstants.SAML20P_NS),

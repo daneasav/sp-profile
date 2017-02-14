@@ -1,6 +1,7 @@
 package io.despick.opensaml.web;
 
 import io.despick.opensaml.init.SamlMetadata;
+import io.despick.opensaml.saml.HTTPRedirectSender;
 import io.despick.opensaml.saml.SingleLogout;
 import io.despick.opensaml.saml.UserSession;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -55,33 +56,8 @@ import java.io.IOException;
 
         request.getSession().invalidate();
 
-        MessageContext context = new MessageContext();
-        context.setMessage(new SingleLogout().buildLogoutResponse(logoutRequest.getID()));
-
-        SAMLPeerEntityContext peerEntityContext = context.getSubcontext(SAMLPeerEntityContext.class, true);
-
-        SAMLEndpointContext endpointContext = peerEntityContext.getSubcontext(SAMLEndpointContext.class, true);
-        endpointContext.setEndpoint(getIDPEndpointByBinding(
-            SamlMetadata.idpDescriptor.getIDPSSODescriptor(SAMLConstants.SAML20P_NS),
-            SAMLConstants.SAML2_REDIRECT_BINDING_URI));
-
-        HTTPRedirectDeflateEncoder encoder = new HTTPRedirectDeflateEncoder();
-        encoder.setMessageContext(context);
-        encoder.setHttpServletResponse(response);
-
-        try {
-            encoder.initialize();
-        } catch (ComponentInitializationException e) {
-            throw new RuntimeException(e);
-        }
-
-        LOGGER.info("Redirecting to IDP");
-        try {
-            encoder.encode();
-        } catch (MessageEncodingException e) {
-            throw new RuntimeException(e);
-        }
-
+        HTTPRedirectSender.sendLogoutResponseRedirectMessage(response, new SingleLogout().buildLogoutResponse(logoutRequest.getID()),
+            SamlMetadata.idpDescriptor.getIDPSSODescriptor(SAMLConstants.SAML20P_NS), SAMLConstants.SAML2_REDIRECT_BINDING_URI);
     }
 
     private LogoutRequest buildLogoutRequestFromRequest(HttpServletRequest request) {
@@ -104,17 +80,6 @@ import java.io.IOException;
             return (LogoutRequest) messageContext.getMessage();
         }
 
-        return null;
-    }
-
-    private Endpoint getIDPEndpointByBinding(IDPSSODescriptor idpssoDescriptor, String binding) {
-        for (SingleLogoutService singleLogoutService : idpssoDescriptor.getSingleLogoutServices()) {
-            if (singleLogoutService.getBinding().equals(binding)) {
-                return singleLogoutService;
-            }
-        }
-
-        // TODO: return fallback binding
         return null;
     }
 

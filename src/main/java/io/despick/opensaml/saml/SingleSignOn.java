@@ -21,10 +21,9 @@ public class SingleSignOn {
         return buildAuthnRequest(SAMLConstants.SAML2_REDIRECT_BINDING_URI, SAMLConstants.SAML2_ARTIFACT_BINDING_URI, authnContext, AuthnContextComparisonTypeEnumeration.EXACT);
     }
 
-    //SAMLConstants.SAML2_ARTIFACT_BINDING_URI
     private AuthnRequest buildAuthnRequest(String requestBinding, String responseBinding, String authnContext, AuthnContextComparisonTypeEnumeration criteria) {
         AuthnRequest authnRequest = SAMLUtil.buildSAMLObject(AuthnRequest.class);
-        authnRequest.setID(SAMLUtil.secureRandomIdGenerator.generateIdentifier());
+        authnRequest.setID(SAMLUtil.getRandomID());
         authnRequest.setIssueInstant(new DateTime());
         authnRequest.setDestination(getIDPDestinationByBinding(
             SamlMetadata.idpDescriptor.getIDPSSODescriptor(SAMLConstants.SAML20P_NS), requestBinding));

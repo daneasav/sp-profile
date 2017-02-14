@@ -148,7 +148,7 @@ public class AssertionConsumerServiceServlet extends HttpServlet {
         ArtifactResolve artifactResolve = SAMLUtil.buildSAMLObject(ArtifactResolve.class);
         artifactResolve.setIssuer(issuer);
         artifactResolve.setIssueInstant(new DateTime());
-        artifactResolve.setID(SAMLUtil.secureRandomIdGenerator.generateIdentifier());
+        artifactResolve.setID(SAMLUtil.getRandomID());
         artifactResolve.setDestination(
             getIDPArtifactResolutionService(SamlMetadata.idpDescriptor.getIDPSSODescriptor(SAMLConstants.SAML20P_NS)));
         artifactResolve.setArtifact(artifact);
@@ -218,8 +218,8 @@ public class AssertionConsumerServiceServlet extends HttpServlet {
         messageInfoContext.setMessageIssueInstant(artifactResponse.getIssueInstant());
 
         MessageLifetimeSecurityHandler lifetimeSecurityHandler = new MessageLifetimeSecurityHandler();
-        lifetimeSecurityHandler.setClockSkew(1000);
-        lifetimeSecurityHandler.setMessageLifetime(2000);
+        lifetimeSecurityHandler.setClockSkew(300000l);
+        lifetimeSecurityHandler.setMessageLifetime(300000L);
         lifetimeSecurityHandler.setRequiredRule(true);
 
         ReceivedEndpointSecurityHandler receivedEndpointSecurityHandler = new ReceivedEndpointSecurityHandler();

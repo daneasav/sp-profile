@@ -5,9 +5,7 @@ import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.MessageDecodingException;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPRedirectDeflateDecoder;
-import org.opensaml.saml.saml2.core.Artifact;
 import org.opensaml.saml.saml2.core.LogoutResponse;
-import org.opensaml.saml.saml2.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,6 +57,7 @@ public class SingleLogoutServlet extends HttpServlet {
         } catch (MessageDecodingException e) {
             LOGGER.error("Exception while decoding saml response ", e);
         }
+
         MessageContext<SAMLObject> messageContext = decoder.getMessageContext();
         if (LogoutResponse.DEFAULT_ELEMENT_LOCAL_NAME.equals(messageContext.getMessage().getElementQName().getLocalPart())) {
             return (LogoutResponse) messageContext.getMessage();

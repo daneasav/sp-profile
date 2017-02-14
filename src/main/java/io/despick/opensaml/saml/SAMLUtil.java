@@ -11,6 +11,12 @@ import javax.xml.namespace.QName;
  */
 public class SAMLUtil {
 
+    private static final RandomIdentifierGenerationStrategy secureRandomIdGenerator = new RandomIdentifierGenerationStrategy();
+
+    public static String getRandomID() {
+        return secureRandomIdGenerator.generateIdentifier();
+    }
+
     public static <T> T buildSAMLObject(final Class<T> clazz) {
         T object;
         try {
@@ -25,7 +31,5 @@ public class SAMLUtil {
 
         return object;
     }
-
-    public static RandomIdentifierGenerationStrategy secureRandomIdGenerator = new RandomIdentifierGenerationStrategy();
 
 }
