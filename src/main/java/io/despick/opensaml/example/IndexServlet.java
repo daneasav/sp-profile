@@ -1,7 +1,7 @@
 package io.despick.opensaml.example;
 
-import io.despick.opensaml.saml.session.UserSession;
-import io.despick.opensaml.saml.session.UserSessionManager;
+import io.despick.opensaml.session.UserSession;
+import io.despick.opensaml.session.UserSessionManager;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

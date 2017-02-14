@@ -1,8 +1,9 @@
 package io.despick.opensaml.web;
 
+import io.despick.opensaml.error.SAMLClientException;
 import io.despick.opensaml.saml.HTTPArtifactSender;
 import io.despick.opensaml.saml.SingleSignOn;
-import io.despick.opensaml.saml.session.UserSessionManager;
+import io.despick.opensaml.session.UserSessionManager;
 import org.opensaml.saml.saml2.core.*;
 
 import org.slf4j.Logger;
@@ -16,9 +17,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @WebServlet(name = "acsServlet", urlPatterns = "/acsArtifact")
-public class AssertionConsumerServiceServlet extends HttpServlet {
+public class ArtifactAssertionConsumerServiceServlet extends HttpServlet {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(AssertionConsumerServiceServlet.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(ArtifactAssertionConsumerServiceServlet.class);
 
     public static final String SAMLART_QUERY_PARAMETER = "SAMLart";
 
@@ -39,19 +40,23 @@ public class AssertionConsumerServiceServlet extends HttpServlet {
                 // get the first one since the IDP only sends one assertion
                 Response samlResponse = (Response) artifactResponse.getMessage();
 
-                //TODO check the number of assertions
-                if (samlResponse.getAssertions().size() == 1) {
-                    Assertion assertion = samlResponse.getAssertions().get(0);
-                    UserSessionManager.setUserSession(request, UserSessionManager.getUserSession(assertion));
+                if (StatusCode.SUCCESS.equals(samlResponse.getStatus().getStatusCode().getValue())) {
+                    if (samlResponse.getAssertions().size() == 1) {
+                        Assertion assertion = samlResponse.getAssertions().get(0);
+                        UserSessionManager.setUserSession(request, UserSessionManager.getUserSession(assertion));
+                    }
+                } else {
+                    // TODO redirect to default error page
                 }
-
             }
         }
 
         try {
+            // TODO send redirect to default page or to RelayState
             response.sendRedirect("/opensaml/index");
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            LOGGER.error("Error while redirecting to: ");
+            throw new SAMLClientException(e.getMessage());
         }
     }
 

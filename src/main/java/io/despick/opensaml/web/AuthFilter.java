@@ -2,7 +2,7 @@ package io.despick.opensaml.web;
 
 import io.despick.opensaml.saml.HTTPRedirectSender;
 import io.despick.opensaml.saml.SingleSignOn;
-import io.despick.opensaml.saml.session.UserSessionManager;
+import io.despick.opensaml.session.UserSessionManager;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.slf4j.Logger;

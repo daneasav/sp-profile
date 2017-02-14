@@ -1,4 +1,4 @@
-package io.despick.opensaml.saml.session;
+package io.despick.opensaml.session;
 
 import org.opensaml.saml.saml2.core.NameID;
 
@@ -19,6 +19,21 @@ public class UserSession {
     private String salutation;
     private String firstName;
     private String lastName;
+
+    // anonymous user attributes
+    private String anonymousUserID;
+
+    public boolean isUser() {
+        return userID != null;
+    }
+
+    public boolean isPermenentUser() {
+        return userID != null && authLevel == 8;
+    }
+
+    public boolean isAnonymousUser() {
+        return anonymousUserID != null;
+    }
 
     public String getSamlSessionIndex() {
         return samlSessionIndex;
@@ -99,4 +114,13 @@ public class UserSession {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
+
+    public String getAnonymousUserID() {
+        return anonymousUserID;
+    }
+
+    public void setAnonymousUserID(String anonymousUserID) {
+        this.anonymousUserID = anonymousUserID;
+    }
+
 }

@@ -2,8 +2,8 @@ package io.despick.opensaml.example;
 
 import io.despick.opensaml.saml.HTTPRedirectSender;
 import io.despick.opensaml.saml.SingleLogout;
-import io.despick.opensaml.saml.session.UserSession;
-import io.despick.opensaml.saml.session.UserSessionManager;
+import io.despick.opensaml.session.UserSession;
+import io.despick.opensaml.session.UserSessionManager;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 
@@ -25,6 +25,7 @@ public class LogoutButton extends HttpServlet {
 
             HTTPRedirectSender.sendLogoutRequestRedirectMessage(response, logoutRequest, SAMLConstants.SAML2_REDIRECT_BINDING_URI);
         } else {
+            // TODO go to default page or relay state
             //do nothing. user is not logged in
         }
     }

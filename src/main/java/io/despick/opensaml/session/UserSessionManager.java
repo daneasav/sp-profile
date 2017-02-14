@@ -1,4 +1,4 @@
-package io.despick.opensaml.saml.session;
+package io.despick.opensaml.session;
 
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.XSString;
@@ -19,7 +19,9 @@ public class UserSessionManager {
     }
 
     public static void setUserSession(HttpServletRequest request, UserSession userSession) {
-        request.getSession().setAttribute(AUTHENTICATED_SESSION_ATTRIBUTE, userSession);
+        if (isValidUserSession(userSession)) {
+            request.getSession().setAttribute(AUTHENTICATED_SESSION_ATTRIBUTE, userSession);
+        }
     }
 
     public static void removeUserSession(HttpServletRequest request) {
@@ -37,9 +39,8 @@ public class UserSessionManager {
         assertion.getSubject().getNameID().detach();
         userSession.setSamlNameID(assertion.getSubject().getNameID());
 
-        // TODO only one authn statement is expected
         //set the session index; it is used by SLO processes
-        if (assertion.getAuthnStatements().size() == 1) {
+        if (assertion.getAuthnStatements() != null && assertion.getAuthnStatements().size() == 1) {
             userSession.setSamlSessionIndex(assertion.getAuthnStatements().get(0).getSessionIndex());
         }
 
@@ -74,12 +75,36 @@ public class UserSessionManager {
                         case "Email":
                             userSession.setEmail(getAttributeValue(attributeValues.get(0)));
                             break;
+                        case "ANONYMOUS_USERID":
+                            userSession.setEmail(getAttributeValue(attributeValues.get(0)));
+                            break;
                     }
                 }
             }
         }
 
-        return userSession;
+        if (isValidUserSession(userSession)) {
+            return userSession;
+        } else {
+            return null;
+        }
+    }
+
+    private static boolean isValidUserSession(UserSession userSession) {
+        if (userSession == null) {
+            return false;
+        }
+
+        if (userSession.getSsoToken() == null || userSession.getAuthLevel() <= 0) {
+            return false;
+        }
+
+        // check if one is not null, but not both at the same time http://stackoverflow.com/a/34586232
+        if (!(userSession.getUserID() == null ^ userSession.getAnonymousUserID() == null)) {
+            return false;
+        }
+
+        return true;
     }
 
     private static String getAttributeValue(XMLObject attributeValue) {

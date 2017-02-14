@@ -1,7 +1,7 @@
 package io.despick.opensaml.saml;
 
 import io.despick.opensaml.init.IDPMetadata;
-import io.despick.opensaml.saml.session.UserSession;
+import io.despick.opensaml.session.UserSession;
 import org.joda.time.DateTime;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.*;
@@ -34,8 +34,15 @@ public class SingleLogout {
         logoutRequest.setIssueInstant(new DateTime());
         logoutRequest.setDestination(IDPMetadata.getIDPSLOServiceEndpointByBinding(requestBinding).getLocation());
         logoutRequest.setIssuer(SAMLUtil.buildSPIssuer());
-        logoutRequest.setNameID(buildNameID(userSession));
-        logoutRequest.getSessionIndexes().add(buildSessionIndex(userSession));
+        // if the SAML name id and the session index were provided at login time, use them
+        if (userSession != null) {
+            if (userSession.getSamlNameID() != null) {
+                logoutRequest.setNameID(userSession.getSamlNameID());
+            }
+            if (userSession.getSamlSessionIndex() != null) {
+                logoutRequest.getSessionIndexes().add(buildSessionIndex(userSession));
+            }
+        }
 
         return logoutRequest;
     }
@@ -45,10 +52,6 @@ public class SingleLogout {
         sessionIndex.setSessionIndex(userSession.getSamlSessionIndex());
 
         return sessionIndex;
-    }
-
-    private static NameID buildNameID(UserSession userSession) {
-        return userSession.getSamlNameID();
     }
 
     private static Status buildSuccessStatus() {
