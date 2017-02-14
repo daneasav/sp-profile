@@ -1,6 +1,7 @@
 package io.despick.opensaml.web;
 
 import io.despick.opensaml.saml.HTTPRedirectDecoder;
+import io.despick.opensaml.saml.session.UserSessionManager;
 import org.opensaml.saml.saml2.core.LogoutResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,9 +23,10 @@ public class SingleLogoutServlet extends HttpServlet {
         LogoutResponse logoutResponse = HTTPRedirectDecoder.buildLogoutResponseFromRequest(request);
 
         if (logoutResponse.getStatus().getStatusCode().getValue().endsWith("Success")) {
-            LOGGER.info("invalidate session " + request.getSession().getId());
-            request.getSession().invalidate();
+            LOGGER.info("Invalidate current session");
+            UserSessionManager.removeUserSession(request);
 
+            // TODO remove the output
             response.getWriter().append("<h1>User was logged out</h1>");
             response.getWriter().append("<p>");
             response.getWriter().append("<form action=\"/opensaml/index\" method=\"GET\"> <input type=\"submit\" value=\"Login\">");

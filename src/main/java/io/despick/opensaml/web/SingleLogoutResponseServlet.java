@@ -4,6 +4,7 @@ import io.despick.opensaml.saml.HTTPRedirectDecoder;
 import io.despick.opensaml.saml.HTTPRedirectSender;
 import io.despick.opensaml.saml.SingleLogout;
 import io.despick.opensaml.saml.session.UserSession;
+import io.despick.opensaml.saml.session.UserSessionManager;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.slf4j.Logger;
@@ -25,12 +26,12 @@ import java.io.IOException;
         throws ServletException, IOException {
         LogoutRequest logoutRequest = HTTPRedirectDecoder.buildLogoutRequestFromRequest(request);
 
-        if (request.getSession().getAttribute(AuthFilter.AUTHENTICATED_SESSION_ATTRIBUTE) != null) {
-            UserSession userSession = (UserSession) request.getSession().getAttribute(AuthFilter.AUTHENTICATED_SESSION_ATTRIBUTE);
+        if (UserSessionManager.isUserSession(request)) {
+            UserSession userSession = UserSessionManager.getUserSession(request);
 
             if (userSession.getSamlNameID().getValue().equals(logoutRequest.getNameID().getValue())
                 && userSession.getSamlSessionIndex().equals(logoutRequest.getSessionIndexes().get(0).getSessionIndex())) {
-                LOGGER.info("invalidate session " + request.getSession().getId());
+                LOGGER.info("Invalidate current session");
             } else {
                 LOGGER.error("The nameID and/or the session index do not match, logging out nonetheless");
             }
@@ -38,10 +39,10 @@ import java.io.IOException;
             LOGGER.error("There is no session, logging out nonetheless.");
         }
 
-        request.getSession().invalidate();
+        UserSessionManager.removeUserSession(request);
 
         HTTPRedirectSender.sendLogoutResponseRedirectMessage(response,
-            new SingleLogout().buildLogoutResponse(logoutRequest.getID()), SAMLConstants.SAML2_REDIRECT_BINDING_URI);
+            SingleLogout.buildLogoutResponse(logoutRequest.getID()), SAMLConstants.SAML2_REDIRECT_BINDING_URI);
     }
 
 }

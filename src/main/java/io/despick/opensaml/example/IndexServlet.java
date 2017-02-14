@@ -1,7 +1,7 @@
 package io.despick.opensaml.example;
 
 import io.despick.opensaml.saml.session.UserSession;
-import io.despick.opensaml.web.AuthFilter;
+import io.despick.opensaml.saml.session.UserSessionManager;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -19,7 +19,7 @@ public class IndexServlet extends HttpServlet {
     response.getWriter().append("<h1>You are now at the requested resource</h1>");
     response.getWriter().append("This is the protected resource. You are authenticated");
 
-    UserSession userSession = (UserSession) request.getSession().getAttribute(AuthFilter.AUTHENTICATED_SESSION_ATTRIBUTE);
+    UserSession userSession = UserSessionManager.getUserSession(request);
     response.getWriter().append("<p>");
     response.getWriter().append("SAML NameID: " + userSession.getSamlNameID().getValue());
     response.getWriter().append("<br/>");

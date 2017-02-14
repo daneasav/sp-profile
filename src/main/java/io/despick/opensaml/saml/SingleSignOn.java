@@ -8,15 +8,15 @@ import org.opensaml.saml.saml2.core.*;
 
 public class SingleSignOn {
 
-    public AuthnRequest buildAuthnRequest() {
+    public static AuthnRequest buildAuthnRequest() {
         return buildAuthnRequest(AuthnContext.PPT_AUTHN_CTX);
     }
 
-    public AuthnRequest buildAuthnRequest(String authnContext) {
+    public static AuthnRequest buildAuthnRequest(String authnContext) {
         return buildAuthnRequest(SAMLConstants.SAML2_REDIRECT_BINDING_URI, SAMLConstants.SAML2_ARTIFACT_BINDING_URI, authnContext, AuthnContextComparisonTypeEnumeration.EXACT);
     }
 
-    private AuthnRequest buildAuthnRequest(String requestBinding, String responseBinding, String authnContext, AuthnContextComparisonTypeEnumeration criteria) {
+    private static AuthnRequest buildAuthnRequest(String requestBinding, String responseBinding, String authnContext, AuthnContextComparisonTypeEnumeration criteria) {
         AuthnRequest authnRequest = SAMLUtil.buildSAMLObject(AuthnRequest.class);
         authnRequest.setID(SAMLUtil.getRandomID());
         authnRequest.setIssueInstant(new DateTime());
@@ -30,7 +30,7 @@ public class SingleSignOn {
         return authnRequest;
     }
 
-    private NameIDPolicy buildTransientNameIdPolicy() {
+    private static NameIDPolicy buildTransientNameIdPolicy() {
         NameIDPolicy nameIDPolicy = SAMLUtil.buildSAMLObject(NameIDPolicy.class);
         nameIDPolicy.setAllowCreate(true);
 
@@ -39,7 +39,7 @@ public class SingleSignOn {
         return nameIDPolicy;
     }
 
-    private RequestedAuthnContext buildRequestedAuthnContext(String authnContext, AuthnContextComparisonTypeEnumeration criteria) {
+    private static RequestedAuthnContext buildRequestedAuthnContext(String authnContext, AuthnContextComparisonTypeEnumeration criteria) {
         AuthnContextClassRef passwordAuthnContextClassRef = SAMLUtil.buildSAMLObject(AuthnContextClassRef.class);
         passwordAuthnContextClassRef.setAuthnContextClassRef(authnContext);
 
@@ -50,5 +50,21 @@ public class SingleSignOn {
         return requestedAuthnContext;
     }
 
+    public static Artifact buildArtifact(String artifactID) {
+        Artifact artifact = SAMLUtil.buildSAMLObject(Artifact.class);
+        artifact.setArtifact(artifactID);
+        return artifact;
+    }
+
+    public static ArtifactResolve buildArtifactResolve(Artifact artifact) {
+        ArtifactResolve artifactResolve = SAMLUtil.buildSAMLObject(ArtifactResolve.class);
+        artifactResolve.setIssuer(SAMLUtil.buildSPIssuer());
+        artifactResolve.setIssueInstant(new DateTime());
+        artifactResolve.setID(SAMLUtil.getRandomID());
+        artifactResolve.setDestination(IDPMetadata.getArtifactResolutionService());
+        artifactResolve.setArtifact(artifact);
+
+        return artifactResolve;
+    }
 
 }

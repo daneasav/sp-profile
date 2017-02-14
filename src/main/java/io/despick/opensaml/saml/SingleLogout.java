@@ -8,11 +8,11 @@ import org.opensaml.saml.saml2.core.*;
 
 public class SingleLogout {
 
-    public LogoutResponse buildLogoutResponse(String requestID) {
+    public static LogoutResponse buildLogoutResponse(String requestID) {
         return buildLogoutResponse(requestID, SAMLConstants.SAML2_REDIRECT_BINDING_URI);
     }
 
-    public LogoutResponse buildLogoutResponse(String requestID, String requestBinding) {
+    public static LogoutResponse buildLogoutResponse(String requestID, String requestBinding) {
         LogoutResponse logoutResponse = SAMLUtil.buildSAMLObject(LogoutResponse.class);
         logoutResponse.setID(SAMLUtil.getRandomID());
         logoutResponse.setInResponseTo(requestID);
@@ -24,11 +24,11 @@ public class SingleLogout {
         return logoutResponse;
     }
 
-    public LogoutRequest buildLogoutRequest(UserSession userSession) {
+    public static LogoutRequest buildLogoutRequest(UserSession userSession) {
         return buildLogoutRequest(userSession, SAMLConstants.SAML2_REDIRECT_BINDING_URI);
     }
 
-    public LogoutRequest buildLogoutRequest(UserSession userSession, String requestBinding) {
+    public static LogoutRequest buildLogoutRequest(UserSession userSession, String requestBinding) {
         LogoutRequest logoutRequest = SAMLUtil.buildSAMLObject(LogoutRequest.class);
         logoutRequest.setID(SAMLUtil.getRandomID());
         logoutRequest.setIssueInstant(new DateTime());
@@ -40,18 +40,18 @@ public class SingleLogout {
         return logoutRequest;
     }
 
-    private SessionIndex buildSessionIndex(UserSession userSession) {
+    private static SessionIndex buildSessionIndex(UserSession userSession) {
         SessionIndex sessionIndex = SAMLUtil.buildSAMLObject(SessionIndex.class);
         sessionIndex.setSessionIndex(userSession.getSamlSessionIndex());
 
         return sessionIndex;
     }
 
-    private NameID buildNameID(UserSession userSession) {
+    private static NameID buildNameID(UserSession userSession) {
         return userSession.getSamlNameID();
     }
 
-    private Status buildSuccessStatus() {
+    private static Status buildSuccessStatus() {
         StatusCode statusCode = SAMLUtil.buildSAMLObject(StatusCode.class);
         statusCode.setValue(StatusCode.SUCCESS);
 

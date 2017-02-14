@@ -3,7 +3,7 @@ package io.despick.opensaml.example;
 import io.despick.opensaml.saml.HTTPRedirectSender;
 import io.despick.opensaml.saml.SingleLogout;
 import io.despick.opensaml.saml.session.UserSession;
-import io.despick.opensaml.web.AuthFilter;
+import io.despick.opensaml.saml.session.UserSessionManager;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 
@@ -19,9 +19,9 @@ public class LogoutButton extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (request.getSession().getAttribute(AuthFilter.AUTHENTICATED_SESSION_ATTRIBUTE) != null) {
-            UserSession userSession = (UserSession) request.getSession().getAttribute(AuthFilter.AUTHENTICATED_SESSION_ATTRIBUTE);
-            LogoutRequest logoutRequest = new SingleLogout().buildLogoutRequest(userSession);
+        if (UserSessionManager.isUserSession(request)) {
+            UserSession userSession = UserSessionManager.getUserSession(request);
+            LogoutRequest logoutRequest = SingleLogout.buildLogoutRequest(userSession);
 
             HTTPRedirectSender.sendLogoutRequestRedirectMessage(response, logoutRequest, SAMLConstants.SAML2_REDIRECT_BINDING_URI);
         } else {

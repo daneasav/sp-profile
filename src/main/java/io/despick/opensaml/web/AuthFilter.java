@@ -2,6 +2,7 @@ package io.despick.opensaml.web;
 
 import io.despick.opensaml.saml.HTTPRedirectSender;
 import io.despick.opensaml.saml.SingleSignOn;
+import io.despick.opensaml.saml.session.UserSessionManager;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.slf4j.Logger;
@@ -18,25 +19,23 @@ public class AuthFilter implements Filter {
 
   public static final Logger LOGGER = LoggerFactory.getLogger(AuthFilter.class);
 
-  public static final String AUTHENTICATED_SESSION_ATTRIBUTE = "user.session.attribute";
-
   @Override
   public void init(FilterConfig filterConfig) throws ServletException {
   }
 
   @Override
-  public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
+  public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
       throws IOException, ServletException {
 
-    HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-    HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+    HttpServletRequest request = (HttpServletRequest) servletRequest;
+    HttpServletResponse response = (HttpServletResponse) servletResponse;
 
-    if (httpServletRequest.getSession().getAttribute(AUTHENTICATED_SESSION_ATTRIBUTE) != null) {
-      filterChain.doFilter(request, response);
+    if (UserSessionManager.isUserSession(request)) {
+      filterChain.doFilter(servletRequest, servletResponse);
     } else {
-      AuthnRequest authnRequest = new SingleSignOn().buildAuthnRequest();
+      AuthnRequest authnRequest = SingleSignOn.buildAuthnRequest();
 
-      HTTPRedirectSender.sendAuthnRequestRedirectMessage(httpServletResponse, authnRequest,
+      HTTPRedirectSender.sendAuthnRequestRedirectMessage(response, authnRequest,
           SAMLConstants.SAML2_REDIRECT_BINDING_URI);
     }
   }
