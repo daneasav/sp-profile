@@ -2,7 +2,6 @@ package io.despick.opensaml.web;
 
 import io.despick.opensaml.saml.HTTPArtifactSender;
 import io.despick.opensaml.saml.SingleSignOn;
-import io.despick.opensaml.saml.session.UserSession;
 import io.despick.opensaml.saml.session.UserSessionManager;
 import org.opensaml.saml.saml2.core.*;
 
@@ -35,7 +34,6 @@ public class AssertionConsumerServiceServlet extends HttpServlet {
 
         ArtifactResponse artifactResponse = HTTPArtifactSender.resolveAndReceiveArtifactResponse(request, artifactResolve);
 
-        UserSession userSession = new UserSession();
         if (Response.DEFAULT_ELEMENT_LOCAL_NAME.equals(artifactResponse.getMessage().getElementQName().getLocalPart())) {
             if (artifactResponse.getMessage().hasChildren()) {
                 // get the first one since the IDP only sends one assertion
@@ -44,13 +42,12 @@ public class AssertionConsumerServiceServlet extends HttpServlet {
                 //TODO check the number of assertions
                 if (samlResponse.getAssertions().size() == 1) {
                     Assertion assertion = samlResponse.getAssertions().get(0);
-                    UserSessionManager.getUserSession(assertion);
+                    UserSessionManager.setUserSession(request, UserSessionManager.getUserSession(assertion));
                 }
 
             }
         }
 
-        UserSessionManager.setUserSession(request, userSession);
         try {
             response.sendRedirect("/opensaml/index");
         } catch (IOException e) {

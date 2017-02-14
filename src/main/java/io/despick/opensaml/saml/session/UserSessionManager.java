@@ -15,11 +15,7 @@ public class UserSessionManager {
     public static final String AUTHENTICATED_SESSION_ATTRIBUTE = "user.session.attribute";
 
     public static UserSession getUserSession(HttpServletRequest request) {
-        if (isUserSession(request)) {
-            return (UserSession) request.getSession().getAttribute(AUTHENTICATED_SESSION_ATTRIBUTE);
-        }
-
-        return null;
+        return (UserSession) request.getSession().getAttribute(AUTHENTICATED_SESSION_ATTRIBUTE);
     }
 
     public static void setUserSession(HttpServletRequest request, UserSession userSession) {
@@ -31,7 +27,7 @@ public class UserSessionManager {
     }
 
     public static boolean isUserSession(HttpServletRequest request) {
-        return request.getSession().getAttribute(AUTHENTICATED_SESSION_ATTRIBUTE) != null;
+        return getUserSession(request) != null;
     }
 
     public static UserSession getUserSession(Assertion assertion) {
