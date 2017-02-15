@@ -25,7 +25,7 @@ public class LogoutButtonServlet extends HttpServlet {
             HTTPRedirectSender.sendLogoutRequestRedirectMessage(response, logoutRequest, request.getContextPath() + "/relaystate");
         } else {
             // TODO go to default page or relay state
-            //do nothing. user is not logged in
+            // do nothing. user is not logged in
         }
     }
 

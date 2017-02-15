@@ -46,13 +46,14 @@ public class AbstractSAMLClientServlet extends HttpServlet {
 
     protected void handleAuthnResponse(HttpServletRequest request, HttpServletResponse response, Response samlResponse) {
         if (StatusCode.SUCCESS.equals(samlResponse.getStatus().getStatusCode().getValue())) {
-            if (samlResponse.getAssertions().size() == 1) {
+            if (samlResponse.getAssertions() != null && samlResponse.getAssertions().size() == 1) {
                 Assertion assertion = samlResponse.getAssertions().get(0);
                 UserSessionManager.setUserSession(request, UserSessionManager.getUserSession(assertion));
 
                 redirectToRelayState(request, response);
             } else {
-                // TODO handle the error
+                LOGGER.error("The IDP didn't sent only one assertion.");
+                redirectToErrorPage(response);
             }
         } else {
             // TODO check for passive auth requests before sending to an error page

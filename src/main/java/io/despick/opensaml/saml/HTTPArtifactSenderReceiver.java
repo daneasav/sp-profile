@@ -1,5 +1,6 @@
 package io.despick.opensaml.saml;
 
+import io.despick.opensaml.error.SAMLClientException;
 import io.despick.opensaml.init.IDPMetadata;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder;
@@ -62,15 +63,15 @@ public class HTTPArtifactSenderReceiver {
             soapClient.send(IDPMetadata.getArtifactResolutionService(), context);
 
             artifactResponse = context.getInboundMessageContext().getMessage();
+
+            validateDestinationAndLifetime(artifactResponse, request);
+            //verifyAssertionSignature(artifactResponse.getMessage());
+
+            return artifactResponse;
         } catch (Exception e) {
-            // TODO moar validation and send to error page
-            throw new RuntimeException(e);
+            LOGGER.error("An error occurred while resolving the artifact: " + artifactResolve.toString(), e);
+            throw new SAMLClientException("An error occurred while resolving the artifact", e);
         }
-
-        validateDestinationAndLifetime(artifactResponse, request);
-        //verifyAssertionSignature(artifactResponse.getMessage());
-
-        return artifactResponse;
     }
 
     private static void validateDestinationAndLifetime(ArtifactResponse artifactResponse, HttpServletRequest request) {
