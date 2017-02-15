@@ -11,19 +11,17 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @WebServlet(name = "sloServlet", urlPatterns = "/sloRedirect")
-public class SingleLogoutServlet extends HttpServlet {
+public class SingleLogoutServlet extends AbstractSAMLClientServlet {
 
     private static Logger LOGGER = LoggerFactory.getLogger(SingleLogoutServlet.class);
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         LogoutRequest logoutRequest = HTTPRedirectDecoder.buildLogoutRequestFromRequest(request);
 
         if (UserSessionManager.isUserSession(request)) {

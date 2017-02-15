@@ -2,6 +2,7 @@ package io.despick.opensaml.saml;
 
 import io.despick.opensaml.error.SAMLClientException;
 import io.despick.opensaml.init.IDPMetadata;
+import io.despick.opensaml.init.SAMLConfigProperties;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.velocity.SLF4JLogChute;
 import org.apache.velocity.app.VelocityEngine;
@@ -29,28 +30,43 @@ public class HTTPPostSender {
     public static final Logger LOGGER = LoggerFactory.getLogger(HTTPPostSender.class);
 
     public static void sendAuthnRequestPostMessage(HttpServletResponse response, AuthnRequest authnRequest) {
-        sendPostMessage(response, authnRequest, IDPMetadata.getIDPSSOServiceEndpointByBinding(SAMLConstants.SAML2_POST_BINDING_URI));
+        sendPostMessage(response, authnRequest, IDPMetadata.getIDPSSOServiceEndpointByBinding(SAMLConstants.SAML2_POST_BINDING_URI),
+            SAMLConfigProperties.getRelayState());
     }
 
     public static void sendLogoutRequestPostMessage(HttpServletResponse response, LogoutRequest logoutRequest) {
-        sendPostMessage(response, logoutRequest, IDPMetadata.getIDPSLOServiceEndpointByBinding(SAMLConstants.SAML2_POST_BINDING_URI));
+        sendPostMessage(response, logoutRequest, IDPMetadata.getIDPSLOServiceEndpointByBinding(SAMLConstants.SAML2_POST_BINDING_URI),
+            SAMLConfigProperties.getRelayState());
     }
 
     public static void sendLogoutResponsePostMessage(HttpServletResponse response, LogoutResponse logoutResponse) {
-        sendPostMessage(response, logoutResponse, IDPMetadata.getIDPSLOServiceEndpointByBinding(SAMLConstants.SAML2_POST_BINDING_URI));
+        sendPostMessage(response, logoutResponse, IDPMetadata.getIDPSLOServiceEndpointByBinding(SAMLConstants.SAML2_POST_BINDING_URI),
+            SAMLConfigProperties.getRelayState());
     }
 
-    private static void sendPostMessage(HttpServletResponse response, SAMLObject message, Endpoint endpoint) {
+    public static void sendAuthnRequestPostMessage(HttpServletResponse response, AuthnRequest authnRequest, String relayState) {
+        sendPostMessage(response, authnRequest, IDPMetadata.getIDPSSOServiceEndpointByBinding(SAMLConstants.SAML2_POST_BINDING_URI), relayState);
+    }
+
+    public static void sendLogoutRequestPostMessage(HttpServletResponse response, LogoutRequest logoutRequest, String relayState) {
+        sendPostMessage(response, logoutRequest, IDPMetadata.getIDPSLOServiceEndpointByBinding(SAMLConstants.SAML2_POST_BINDING_URI), relayState);
+    }
+
+    public static void sendLogoutResponsePostMessage(HttpServletResponse response, LogoutResponse logoutResponse, String relayState) {
+        sendPostMessage(response, logoutResponse, IDPMetadata.getIDPSLOServiceEndpointByBinding(SAMLConstants.SAML2_POST_BINDING_URI), relayState);
+    }
+
+    private static void sendPostMessage(HttpServletResponse response, SAMLObject message, Endpoint endpoint, String relayState) {
         MessageContext<SAMLObject> context = new MessageContext();
         context.setMessage(message);
 
         SAMLPeerEntityContext peerEntityContext = context.getSubcontext(SAMLPeerEntityContext.class, true);
 
-        /*SAMLBindingContext bindingContext = context.getSubcontext(SAMLBindingContext.class, true);
-        bindingContext.setRelayState("");*/
-
         SAMLEndpointContext endpointContext = peerEntityContext.getSubcontext(SAMLEndpointContext.class, true);
         endpointContext.setEndpoint(endpoint);
+
+        SAMLBindingContext bindingContext = context.getSubcontext(SAMLBindingContext.class, true);
+        bindingContext.setRelayState(relayState);
 
         HTTPPostEncoder encoder = new HTTPPostEncoder();
         encoder.setVelocityEngine(getVelocityEngine());
@@ -72,7 +88,6 @@ public class HTTPPostSender {
     }
 
     public static VelocityEngine getVelocityEngine() {
-
         try {
             final Properties props =
                 new Properties(net.shibboleth.utilities.java.support.velocity.VelocityEngine.getDefaultProperties());
@@ -87,7 +102,6 @@ public class HTTPPostSender {
         } catch (final Exception e) {
             throw new SAMLClientException("Error configuring velocity", e);
         }
-
     }
 
 }

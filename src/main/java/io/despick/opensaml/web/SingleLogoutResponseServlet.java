@@ -9,13 +9,12 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @WebServlet(name = "sloResponseServlet", urlPatterns = "/sloRedirectResponse")
-public class SingleLogoutResponseServlet extends HttpServlet {
+public class SingleLogoutResponseServlet extends AbstractSAMLClientServlet {
 
     private static Logger LOGGER = LoggerFactory.getLogger(SingleLogoutResponseServlet.class);
 
@@ -27,13 +26,11 @@ public class SingleLogoutResponseServlet extends HttpServlet {
             LOGGER.info("Invalidate current session");
             UserSessionManager.removeUserSession(request);
 
-            // TODO send to relaystate or default page
-            response.getWriter().append("<h1>User was logged out</h1>");
-            response.getWriter().append("<p>");
-            response.getWriter().append("<form action=\"/opensaml/index\" method=\"GET\"> <input type=\"submit\" value=\"Login\">");
-            response.getWriter().append("</p>");
+            redirectToRelayState(request, response);
         } else {
             LOGGER.error("logout response was not success.");
+
+            redirectToErrorPage(response);
         }
     }
 

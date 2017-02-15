@@ -25,8 +25,7 @@ public class SPMetadata {
         private static EntityDescriptor init() {
             try {
                 // get the SP SAML metadata
-                String path = SAMLConfigProperties.getInstance().getProperty(SAMLConfigProperties.SAML_CLIENT_HOME_DIR)
-                    + File.separator + "sp.xml";
+                String path = SAMLConfigProperties.getHome() + File.separator + "sp.xml";
                 FilesystemMetadataResolver spMetadataResolver = new FilesystemMetadataResolver(new File(path));
                 spMetadataResolver.setId("sp");
                 spMetadataResolver.setParserPool(InitializedParserPool.getInstance());

@@ -1,8 +1,6 @@
 package io.despick.opensaml.web;
 
-import io.despick.opensaml.saml.HTTPPostDecoder;
 import io.despick.opensaml.saml.HTTPPostSender;
-import io.despick.opensaml.saml.HTTPRedirectSender;
 import io.despick.opensaml.saml.SingleSignOn;
 import io.despick.opensaml.session.UserSessionManager;
 import org.opensaml.saml.common.xml.SAMLConstants;
@@ -40,7 +38,7 @@ public class AuthFilter implements Filter {
           SAMLConstants.SAML2_POST_BINDING_URI, AuthnContext.PPT_AUTHN_CTX);
 
       //HTTPRedirectSender.sendAuthnRequestRedirectMessage(response, authnRequest);
-      HTTPPostSender.sendAuthnRequestPostMessage(response, authnRequest);
+      HTTPPostSender.sendAuthnRequestPostMessage(response, authnRequest, request.getContextPath() + "/relaystate");
     }
   }
 

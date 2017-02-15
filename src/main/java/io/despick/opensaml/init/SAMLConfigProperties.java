@@ -13,7 +13,7 @@ public class SAMLConfigProperties {
     public static final String SAML_CLIENT_HOME_DIR = "saml.client.home";
     public static final String SAML_RELAYSTATE = "saml.client.relaystate";
     public static final String SAML_ERROR_PAGE = "saml.client.errorpage";
-    // TODO remove the old property when we cna migrate to a new one: saml.client.default.home
+    // TODO remove the old property to a new one: saml.client.default.home once we have this saml client in production
     private static final String SAMLCLIENT_HOME_DIR_JVM_PROPERTY = "com.sun.identity.fedlet.home";
     private static final String SAMLCLIENT_DEFAULT_RELAYSTATE_JVM_PROPERTY = "saml.client.default.relaystate";
     private static final String SAMLCLIENT_DEFAULT_ERROR_PAGE_JVM_PROPERTY = "saml.client.default.errorpage";
@@ -88,6 +88,18 @@ public class SAMLConfigProperties {
 
     public static Properties getInstance() {
         return LazyHolder.INSTANCE;
+    }
+
+    public static String getHome() {
+        return getInstance().getProperty(SAML_CLIENT_HOME_DIR);
+    }
+
+    public static String getRelayState() {
+        return getInstance().getProperty(SAML_RELAYSTATE);
+    }
+
+    public static String getErrorPage() {
+        return getInstance().getProperty(SAML_ERROR_PAGE);
     }
 
 }

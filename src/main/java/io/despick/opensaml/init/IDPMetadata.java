@@ -23,8 +23,7 @@ public class IDPMetadata {
         private static EntityDescriptor init() {
             try {
                 // get the IDP SAML metadata
-                String path = SAMLConfigProperties.getInstance().getProperty(SAMLConfigProperties.SAML_CLIENT_HOME_DIR)
-                    + File.separator + "idp.xml";
+                String path = SAMLConfigProperties.getHome() + File.separator + "idp.xml";
                 FilesystemMetadataResolver idpMetadataResolver = new FilesystemMetadataResolver(new File(path));
                 idpMetadataResolver.setId("idp");
                 idpMetadataResolver.setParserPool(InitializedParserPool.getInstance());
