@@ -7,6 +7,7 @@ import org.opensaml.messaging.encoder.MessageEncodingException;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
+import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.binding.encoding.impl.HTTPRedirectDeflateEncoder;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.LogoutRequest;
@@ -22,16 +23,16 @@ public class HTTPRedirectSender {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(HTTPRedirectSender.class);
 
-    public static void sendAuthnRequestRedirectMessage(HttpServletResponse response, AuthnRequest authnRequest, String binding) {
-        sendRedirectMessage(response, authnRequest, IDPMetadata.getIDPSSOServiceEndpointByBinding(binding));
+    public static void sendAuthnRequestRedirectMessage(HttpServletResponse response, AuthnRequest authnRequest) {
+        sendRedirectMessage(response, authnRequest, IDPMetadata.getIDPSSOServiceEndpointByBinding(SAMLConstants.SAML2_REDIRECT_BINDING_URI));
     }
 
-    public static void sendLogoutRequestRedirectMessage(HttpServletResponse response, LogoutRequest logoutRequest, String binding) {
-        sendRedirectMessage(response, logoutRequest, IDPMetadata.getIDPSLOServiceEndpointByBinding(binding));
+    public static void sendLogoutRequestRedirectMessage(HttpServletResponse response, LogoutRequest logoutRequest) {
+        sendRedirectMessage(response, logoutRequest, IDPMetadata.getIDPSLOServiceEndpointByBinding(SAMLConstants.SAML2_REDIRECT_BINDING_URI));
     }
 
-    public static void sendLogoutResponseRedirectMessage(HttpServletResponse response, LogoutResponse logoutResponse, String binding) {
-        sendRedirectMessage(response, logoutResponse, IDPMetadata.getIDPSLOServiceEndpointByBinding(binding));
+    public static void sendLogoutResponseRedirectMessage(HttpServletResponse response, LogoutResponse logoutResponse) {
+        sendRedirectMessage(response, logoutResponse, IDPMetadata.getIDPSLOServiceEndpointByBinding(SAMLConstants.SAML2_REDIRECT_BINDING_URI));
     }
 
     private static void sendRedirectMessage(HttpServletResponse response, SAMLObject message, Endpoint endpoint) {

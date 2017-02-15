@@ -138,6 +138,10 @@
                             <name>org.slf4j.simpleLogger.defaultLogLevel</name>
                             <value>debug</value>
                         </systemProperty>
+                        <systemProperty>
+                            <name>com.sun.identity.fedlet.home</name>
+                            <value>${project.basedir}</value>
+                        </systemProperty>
                     </systemProperties>
 
                     <scanIntervalSeconds>2</scanIntervalSeconds>

@@ -28,9 +28,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HTTPArtifactSender {
+public class HTTPArtifactSenderReceiver {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(HTTPArtifactSender.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(HTTPArtifactSenderReceiver.class);
 
     public static ArtifactResponse resolveAndReceiveArtifactResponse(HttpServletRequest request, final ArtifactResolve artifactResolve) {
         ArtifactResponse artifactResponse;
@@ -63,6 +63,7 @@ public class HTTPArtifactSender {
 
             artifactResponse = context.getInboundMessageContext().getMessage();
         } catch (Exception e) {
+            // TODO moar validation and send to error page
             throw new RuntimeException(e);
         }
 

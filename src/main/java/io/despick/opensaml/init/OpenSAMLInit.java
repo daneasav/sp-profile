@@ -28,6 +28,8 @@ public class OpenSAMLInit implements ServletContextListener {
             // read SAML config files
             LOGGER.info("IDP metadata is: {0}", IDPMetadata.getInstance().toString());
             LOGGER.info("SP metadata is: {0}", SPMetadata.getInstance().toString());
+
+
         } catch (InitializationException e) {
             LOGGER.error("Initialization failed", e);
             throw new RuntimeException(e.getMessage(), e);

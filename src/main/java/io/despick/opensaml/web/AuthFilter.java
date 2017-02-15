@@ -1,9 +1,12 @@
 package io.despick.opensaml.web;
 
+import io.despick.opensaml.saml.HTTPPostDecoder;
+import io.despick.opensaml.saml.HTTPPostSender;
 import io.despick.opensaml.saml.HTTPRedirectSender;
 import io.despick.opensaml.saml.SingleSignOn;
 import io.despick.opensaml.session.UserSessionManager;
 import org.opensaml.saml.common.xml.SAMLConstants;
+import org.opensaml.saml.saml2.core.AuthnContext;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,10 +36,11 @@ public class AuthFilter implements Filter {
     if (UserSessionManager.isUserSession(request)) {
       filterChain.doFilter(servletRequest, servletResponse);
     } else {
-      AuthnRequest authnRequest = SingleSignOn.buildAuthnRequest();
+      AuthnRequest authnRequest = SingleSignOn.buildAuthnRequest(SAMLConstants.SAML2_POST_BINDING_URI,
+          SAMLConstants.SAML2_POST_BINDING_URI, AuthnContext.PPT_AUTHN_CTX);
 
-      HTTPRedirectSender.sendAuthnRequestRedirectMessage(response, authnRequest,
-          SAMLConstants.SAML2_REDIRECT_BINDING_URI);
+      //HTTPRedirectSender.sendAuthnRequestRedirectMessage(response, authnRequest);
+      HTTPPostSender.sendAuthnRequestPostMessage(response, authnRequest);
     }
   }
 

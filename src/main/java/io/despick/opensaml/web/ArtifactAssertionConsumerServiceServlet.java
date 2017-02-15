@@ -1,7 +1,7 @@
 package io.despick.opensaml.web;
 
 import io.despick.opensaml.error.SAMLClientException;
-import io.despick.opensaml.saml.HTTPArtifactSender;
+import io.despick.opensaml.saml.HTTPArtifactSenderReceiver;
 import io.despick.opensaml.saml.SingleSignOn;
 import io.despick.opensaml.session.UserSessionManager;
 import org.opensaml.saml.saml2.core.*;
@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(name = "acsServlet", urlPatterns = "/acsArtifact")
+@WebServlet(name = "artifactACSServlet", urlPatterns = "/acsArtifact")
 public class ArtifactAssertionConsumerServiceServlet extends HttpServlet {
 
     private static Logger LOGGER = LoggerFactory.getLogger(ArtifactAssertionConsumerServiceServlet.class);
@@ -33,7 +33,8 @@ public class ArtifactAssertionConsumerServiceServlet extends HttpServlet {
         ArtifactResolve artifactResolve = SingleSignOn.buildArtifactResolve(artifact);
         LOGGER.info("Sending ArtifactResolve");
 
-        ArtifactResponse artifactResponse = HTTPArtifactSender.resolveAndReceiveArtifactResponse(request, artifactResolve);
+        ArtifactResponse artifactResponse = HTTPArtifactSenderReceiver
+            .resolveAndReceiveArtifactResponse(request, artifactResolve);
 
         if (Response.DEFAULT_ELEMENT_LOCAL_NAME.equals(artifactResponse.getMessage().getElementQName().getLocalPart())) {
             if (artifactResponse.getMessage().hasChildren()) {

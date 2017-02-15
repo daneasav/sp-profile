@@ -25,15 +25,17 @@ public class SPMetadata {
         private static EntityDescriptor init() {
             try {
                 // get the SP SAML metadata
-                FilesystemMetadataResolver spMetadataResolver = new FilesystemMetadataResolver(new File("sp.xml"));
-                spMetadataResolver.setId("idp");
+                String path = SAMLConfigProperties.getInstance().getProperty(SAMLConfigProperties.SAML_CLIENT_HOME_DIR)
+                    + File.separator + "sp.xml";
+                FilesystemMetadataResolver spMetadataResolver = new FilesystemMetadataResolver(new File(path));
+                spMetadataResolver.setId("sp");
                 spMetadataResolver.setParserPool(InitializedParserPool.getInstance());
                 spMetadataResolver.initialize();
 
                 return spMetadataResolver.iterator().next();
             } catch (ResolverException | ComponentInitializationException e) {
-                LOGGER.error("Metadata is invalid", e);
-                throw new SAMLClientException("Metadata is invalid");
+                LOGGER.error("SP Metadata is invalid", e);
+                throw new SAMLClientException("SP Metadata is invalid");
             }
         }
     }

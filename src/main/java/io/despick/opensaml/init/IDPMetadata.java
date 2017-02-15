@@ -23,15 +23,17 @@ public class IDPMetadata {
         private static EntityDescriptor init() {
             try {
                 // get the IDP SAML metadata
-                FilesystemMetadataResolver idpMetadataResolver = new FilesystemMetadataResolver(new File("idp.xml"));
-                idpMetadataResolver.setId("sp");
+                String path = SAMLConfigProperties.getInstance().getProperty(SAMLConfigProperties.SAML_CLIENT_HOME_DIR)
+                    + File.separator + "idp.xml";
+                FilesystemMetadataResolver idpMetadataResolver = new FilesystemMetadataResolver(new File(path));
+                idpMetadataResolver.setId("idp");
                 idpMetadataResolver.setParserPool(InitializedParserPool.getInstance());
                 idpMetadataResolver.initialize();
 
                 return idpMetadataResolver.iterator().next();
             } catch (ResolverException | ComponentInitializationException e) {
-                LOGGER.error("Metadata is invalid", e);
-                throw new SAMLClientException("Metadata is invalid");
+                LOGGER.error("IDP Metadata is invalid", e);
+                throw new SAMLClientException("IDP Metadata is invalid");
             }
         }
     }

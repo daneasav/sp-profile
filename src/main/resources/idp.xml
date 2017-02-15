@@ -1,46 +1,49 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<EntityDescriptor entityID="https://login.haufe-lexware.com:443/auth" xmlns="urn:oasis:names:tc:SAML:2.0:metadata">
+<EntityDescriptor entityID="https://integration.login.haufe-lexware.com:443/auth" xmlns="urn:oasis:names:tc:SAML:2.0:metadata">
     <IDPSSODescriptor WantAuthnRequestsSigned="false" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
         <KeyDescriptor use="signing">
             <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
                 <ds:X509Data>
                     <ds:X509Certificate>
-                        MIICrTCCAhagAwIBAgIETMwwQjANBgkqhkiG9w0BAQUFADCBmjELMAkGA1UEBhMCREUxGzAZBgNV
+                        MIICrTCCAhagAwIBAgIETb625zANBgkqhkiG9w0BAQUFADCBmjELMAkGA1UEBhMCREUxGzAZBgNV
                         BAgTEkJhZGVuLVd1ZXJ0dGVtYmVyZzERMA8GA1UEBxMIRnJlaWJ1cmcxKzApBgNVBAoTIlJ1ZG9s
                         ZiBIYXVmZSBWZXJsYWcgR21iSCB1bmQgQ28gS0cxDDAKBgNVBAsTA1NXRDEgMB4GA1UEAxMXbG9n
-                        aW4uaGF1ZmUtbGV4d2FyZS5jb20wHhcNMTAxMDMwMTQ0ODM0WhcNMjAwOTA3MTQ0ODM0WjCBmjEL
+                        aW4uaGF1ZmUtbGV4d2FyZS5jb20wHhcNMTEwNTAyMTM1MTM1WhcNMjEwMzEwMTM1MTM1WjCBmjEL
                         MAkGA1UEBhMCREUxGzAZBgNVBAgTEkJhZGVuLVd1ZXJ0dGVtYmVyZzERMA8GA1UEBxMIRnJlaWJ1
                         cmcxKzApBgNVBAoTIlJ1ZG9sZiBIYXVmZSBWZXJsYWcgR21iSCB1bmQgQ28gS0cxDDAKBgNVBAsT
                         A1NXRDEgMB4GA1UEAxMXbG9naW4uaGF1ZmUtbGV4d2FyZS5jb20wgZ8wDQYJKoZIhvcNAQEBBQAD
-                        gY0AMIGJAoGBAKVO9kes4mGJ30QT/XJOCjsDDA0vuvhk7XP2alCTjFRttSZU6entcdWKquXu8RXX
-                        lfHp83K1sz6PN5VO3HHS6YOBiFB7xn27OlYzsURd7aNaYVwkohSEP4mvzIIoft50yo1fm0h0nVxW
-                        TlM/J4FhhwgUCGB6fXmErt+97+q3lzWHAgMBAAEwDQYJKoZIhvcNAQEFBQADgYEAGtbN5/vvE1di
-                        a+EjGqZ+/HQPnu86qA2r6DZSrC0HECyipKbJYuGhjLWsXnlwxxt7DaaxeICx9nhcB7Jxkquqk/1Q
-                        MaJ6dFevXyhW6rM3Ug/Dmc1rVGkSUzh2EAIC3aTd4fl+7Uui43bkSJuchxAItY3/iVOlp3AXfmxz
-                        Q6SOCfc=
+                        gY0AMIGJAoGBAKOTX6xdbs1VBd/WSpF9slgkES73CCNBtFNLZQRbR+QirrBKPKSRm9k1xtDCj0NJ
+                        d57EC6SYaMnj/frwdXH9cvmKc9Wqra2tH0W15Yyt77FVaNxEKmi4GDW4ciFLnFEHptuTda3vg+xj
+                        mEkFfIES1qBN5YSX31MCQXLCay/FVIwLAgMBAAEwDQYJKoZIhvcNAQEFBQADgYEABSRND2F9jwFS
+                        QTAZ4Lsw6xeJIH/kqE/17+1UY+PuAT0NOPiupL5HGj/MRfsMs/IMCtDtDQrHEUTpQADvXmdPIdhL
+                        rXuH6of6cCeMARyAjhJ2qglQzCjmMObtZNk+rjvad7dahiU6NQMwBtkoV71uGN3UyWEp+esFbcXB
+                        g8t2tGs=
                     </ds:X509Certificate>
                 </ds:X509Data>
             </ds:KeyInfo>
+
         </KeyDescriptor>
-        <ArtifactResolutionService index="0" isDefault="true" Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://login.haufe-lexware.com:443/auth/ArtifactResolver/metaAlias/idp"/>
-        <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://login.haufe-lexware.com:443/auth/IDPSloRedirect/metaAlias/idp" ResponseLocation="https://login.haufe-lexware.com:443/auth/IDPSloRedirect/metaAlias/idp"/>
-        <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://login.haufe-lexware.com:443/auth/IDPSloPOST/metaAlias/idp" ResponseLocation="https://login.haufe-lexware.com:443/auth/IDPSloPOST/metaAlias/idp"/>
-        <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://login.haufe-lexware.com:443/auth/IDPSloSoap/metaAlias/idp"/>
-        <ManageNameIDService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://login.haufe-lexware.com:443/auth/IDPMniRedirect/metaAlias/idp" ResponseLocation="https://login.haufe-lexware.com:443/auth/IDPMniRedirect/metaAlias/idp"/>
-        <ManageNameIDService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://login.haufe-lexware.com:443/auth/IDPMniPOST/metaAlias/idp" ResponseLocation="https://login.haufe-lexware.com:443/auth/IDPMniPOST/metaAlias/idp"/>
-        <ManageNameIDService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://login.haufe-lexware.com:443/auth/IDPMniSoap/metaAlias/idp"/>
+        <ArtifactResolutionService index="0" isDefault="true" Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://integration.login.haufe-lexware.com:443/auth/ArtifactResolver/metaAlias/idp1"/>
+        <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://integration.login.haufe-lexware.com:443/auth/IDPSloRedirect/metaAlias/idp1" ResponseLocation="https://integration.login.haufe-lexware.com:443/auth/IDPSloRedirect/metaAlias/idp1"/>
+        <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://integration.login.haufe-lexware.com:443/auth/IDPSloPOST/metaAlias/idp1" ResponseLocation="https://integration.login.haufe-lexware.com:443/auth/IDPSloPOST/metaAlias/idp1"/>
+        <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://integration.login.haufe-lexware.com:443/auth/IDPSloSoap/metaAlias/idp1"/>
+        <ManageNameIDService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://integration.login.haufe-lexware.com:443/auth/IDPMniRedirect/metaAlias/idp1" ResponseLocation="https://integration.login.haufe-lexware.com:443/auth/IDPMniRedirect/metaAlias/idp1"/>
+        <ManageNameIDService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://integration.login.haufe-lexware.com:443/auth/IDPMniPOST/metaAlias/idp1" ResponseLocation="https://integration.login.haufe-lexware.com:443/auth/IDPMniPOST/metaAlias/idp1"/>
+        <ManageNameIDService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://integration.login.haufe-lexware.com:443/auth/IDPMniSoap/metaAlias/idp1"/>
         <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:persistent</NameIDFormat>
+
         <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</NameIDFormat>
         <NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</NameIDFormat>
         <NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</NameIDFormat>
         <NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:WindowsDomainQualifiedName</NameIDFormat>
         <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:kerberos</NameIDFormat>
         <NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:X509SubjectName</NameIDFormat>
-        <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://login.haufe-lexware.com:443/auth/SSORedirect/metaAlias/idp"/>
-        <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://login.haufe-lexware.com:443/auth/SSOPOST/metaAlias/idp"/>
-        <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://login.haufe-lexware.com:443/auth/SSOSoap/metaAlias/idp"/>
-        <NameIDMappingService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://login.haufe-lexware.com:443/auth/NIMSoap/metaAlias/idp"/>
-        <AssertionIDRequestService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://login.haufe-lexware.com:443/auth/AIDReqSoap/IDPRole/metaAlias/idp"/>
-        <AssertionIDRequestService Binding="urn:oasis:names:tc:SAML:2.0:bindings:URI" Location="https://login.haufe-lexware.com:443/auth/AIDReqUri/IDPRole/metaAlias/idp"/>
+
+        <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://integration.login.haufe-lexware.com:443/auth/SSORedirect/metaAlias/idp1"/>
+        <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://integration.login.haufe-lexware.com:443/auth/SSOPOST/metaAlias/idp1"/>
+        <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://integration.login.haufe-lexware.com:443/auth/SSOSoap/metaAlias/idp1"/>
+        <NameIDMappingService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://integration.login.haufe-lexware.com:443/auth/NIMSoap/metaAlias/idp1"/>
+        <AssertionIDRequestService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://integration.login.haufe-lexware.com:443/auth/AIDReqSoap/IDPRole/metaAlias/idp1"/>
+        <AssertionIDRequestService Binding="urn:oasis:names:tc:SAML:2.0:bindings:URI" Location="https://integration.login.haufe-lexware.com:443/auth/AIDReqUri/IDPRole/metaAlias/idp1"/>
     </IDPSSODescriptor>
 </EntityDescriptor>

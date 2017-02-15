@@ -4,7 +4,6 @@ import io.despick.opensaml.saml.HTTPRedirectSender;
 import io.despick.opensaml.saml.SingleLogout;
 import io.despick.opensaml.session.UserSession;
 import io.despick.opensaml.session.UserSessionManager;
-import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 
 import javax.servlet.ServletException;
@@ -15,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @WebServlet(name = "logoutServlet", urlPatterns = "/logout")
-public class LogoutButton extends HttpServlet {
+public class LogoutButtonServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -23,7 +22,7 @@ public class LogoutButton extends HttpServlet {
             UserSession userSession = UserSessionManager.getUserSession(request);
             LogoutRequest logoutRequest = SingleLogout.buildLogoutRequest(userSession);
 
-            HTTPRedirectSender.sendLogoutRequestRedirectMessage(response, logoutRequest, SAMLConstants.SAML2_REDIRECT_BINDING_URI);
+            HTTPRedirectSender.sendLogoutRequestRedirectMessage(response, logoutRequest);
         } else {
             // TODO go to default page or relay state
             //do nothing. user is not logged in

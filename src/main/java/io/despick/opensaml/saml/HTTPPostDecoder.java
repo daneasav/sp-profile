@@ -4,17 +4,28 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.MessageDecodingException;
 import org.opensaml.saml.common.SAMLObject;
-import org.opensaml.saml.saml2.binding.decoding.impl.HTTPRedirectDeflateDecoder;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.core.LogoutResponse;
+import org.opensaml.saml.saml2.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class HTTPRedirectDecoder {
+public class HTTPPostDecoder {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(HTTPRedirectDecoder.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(HTTPPostDecoder.class);
+
+    public static Response buildResponseFromRequest(HttpServletRequest request) {
+        MessageContext<SAMLObject> messageContext = buildSAMLObjectFromRequest(request);
+
+        if (Response.DEFAULT_ELEMENT_LOCAL_NAME.equals(messageContext.getMessage().getElementQName().getLocalPart())) {
+            return (Response) messageContext.getMessage();
+        }
+
+        LOGGER.error("Could not decode the Response message" + messageContext.getMessage());
+        return null;
+    }
 
     public static LogoutRequest buildLogoutRequestFromRequest(HttpServletRequest request) {
         MessageContext<SAMLObject> messageContext = buildSAMLObjectFromRequest(request);
@@ -39,7 +50,8 @@ public class HTTPRedirectDecoder {
     }
 
     private static MessageContext<SAMLObject> buildSAMLObjectFromRequest(HttpServletRequest request) {
-        HTTPRedirectDeflateDecoder decoder = new HTTPRedirectDeflateDecoder();
+        org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder decoder
+            = new org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder();
         decoder.setHttpServletRequest(request);
         try {
             decoder.initialize();
