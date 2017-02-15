@@ -1,11 +1,16 @@
 package io.despick.opensaml.web;
 
+import io.despick.opensaml.config.IDPMetadata;
 import io.despick.opensaml.error.SAMLClientException;
 import io.despick.opensaml.config.SAMLConfigProperties;
 import io.despick.opensaml.session.UserSessionManager;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.StatusCode;
+import org.opensaml.saml.security.impl.SAMLSignatureProfileValidator;
+import org.opensaml.security.credential.Credential;
+import org.opensaml.xmlsec.signature.support.SignatureException;
+import org.opensaml.xmlsec.signature.support.SignatureValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,11 +53,16 @@ public class AbstractSAMLClientServlet extends HttpServlet {
         if (StatusCode.SUCCESS.equals(samlResponse.getStatus().getStatusCode().getValue())) {
             if (samlResponse.getAssertions() != null && samlResponse.getAssertions().size() == 1) {
                 Assertion assertion = samlResponse.getAssertions().get(0);
-                UserSessionManager.setUserSession(request, UserSessionManager.getUserSession(assertion));
+                if (verifyAssertionSignature(assertion)) {
+                    UserSessionManager.setUserSession(request, UserSessionManager.getUserSession(assertion));
 
-                redirectToRelayState(request, response);
+                    redirectToRelayState(request, response);
+                } else {
+                    LOGGER.error("The Assertion signature validation failed. Redirecting to the error page.");
+                    redirectToErrorPage(response);
+                }
             } else {
-                LOGGER.error("The IDP didn't sent only one assertion.");
+                LOGGER.error("The IDP didn't sent only one assertion. Redirecting to the error page.");
                 redirectToErrorPage(response);
             }
         } else {
@@ -61,5 +71,35 @@ public class AbstractSAMLClientServlet extends HttpServlet {
 
             redirectToErrorPage(response);
         }
+    }
+
+    private boolean verifyAssertionSignature(Assertion assertion) {
+        if (!assertion.isSigned()) {
+            LOGGER.error("The SAML Assertion was not signed");
+            return false;
+        }
+
+        try {
+            SAMLSignatureProfileValidator profileValidator = new SAMLSignatureProfileValidator();
+            profileValidator.validate(assertion.getSignature());
+        } catch (SignatureException e) {
+            LOGGER.error("The SAML Assertion profile validation failed");
+            return false;
+        }
+
+        // run through each certificate present in the IDP metadata
+        boolean validSignature = false;
+        for (Credential credential : IDPMetadata.getIDPSigningCertificates()) {
+            try {
+                SignatureValidator.validate(assertion.getSignature(), credential);
+                validSignature = true;
+                break;
+            } catch (SignatureException e) {
+                LOGGER.error("The SAML Assertion validation failed against the " + credential.toString() + " certificate");
+                return false;
+            }
+        }
+
+        return validSignature;
     }
 }

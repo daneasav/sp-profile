@@ -65,7 +65,6 @@ public class HTTPArtifactSenderReceiver {
             artifactResponse = context.getInboundMessageContext().getMessage();
 
             validateDestinationAndLifetime(artifactResponse, request);
-            //verifyAssertionSignature(artifactResponse.getMessage());
 
             return artifactResponse;
         } catch (Exception e) {
@@ -103,22 +102,5 @@ public class HTTPArtifactSenderReceiver {
             throw new RuntimeException(e);
         }
     }
-
-    /*private static void verifyAssertionSignature(Assertion assertion) {
-        if (!assertion.isSigned()) {
-            throw new RuntimeException("The SAML Assertion was not signed");
-        }
-
-        try {
-            SAMLSignatureProfileValidator profileValidator = new SAMLSignatureProfileValidator();
-            profileValidator.validate(assertion.getSignature());
-
-            SignatureValidator.validate(assertion.getSignature(), );
-
-            LOGGER.info("SAML Assertion signature verified");
-        } catch (SignatureException e) {
-            e.printStackTrace();
-        }
-    }*/
 
 }

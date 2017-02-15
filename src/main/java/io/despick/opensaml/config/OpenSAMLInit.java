@@ -22,7 +22,7 @@ public class OpenSAMLInit implements ServletContextListener {
             JavaCryptoValidationInitializer javaCryptoValidationInitializer = new JavaCryptoValidationInitializer();
             javaCryptoValidationInitializer.init();
 
-            //getInstance the opensaml library
+            //initialize the opensaml library
             InitializationService.initialize();
 
             // read SAML config files

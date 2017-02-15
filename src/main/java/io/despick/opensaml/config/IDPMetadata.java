@@ -6,10 +6,22 @@ import net.shibboleth.utilities.java.support.resolver.ResolverException;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.metadata.resolver.impl.FilesystemMetadataResolver;
 import org.opensaml.saml.saml2.metadata.*;
+import org.opensaml.security.credential.BasicCredential;
+import org.opensaml.security.credential.Credential;
+import org.opensaml.security.credential.UsageType;
+import org.opensaml.xmlsec.signature.X509Certificate;
+import org.opensaml.xmlsec.signature.X509Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.bind.DatatypeConverter;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.util.ArrayList;
+import java.util.List;
 
 public class IDPMetadata {
 
@@ -80,6 +92,38 @@ public class IDPMetadata {
 
         LOGGER.error("IDP SLO Service was not found for {0} binding", binding);
         throw new SAMLClientException("IDP SLO Service was not found for " + binding + " binding");
+    }
+
+    public static List<Credential> getIDPSigningCertificates() {
+        List<Credential> certificates = new ArrayList<>();
+
+        for (KeyDescriptor keyDescriptor : getIDPSSODescriptor().getKeyDescriptors()) {
+            if (keyDescriptor.getUse().equals(UsageType.SIGNING)) {
+                // we only support x509 certificates
+                for (X509Data x509Data : keyDescriptor.getKeyInfo().getX509Datas()) {
+                    for (X509Certificate x509Certificate : x509Data.getX509Certificates()) {
+                        try {
+                            certificates.add(getCertificate(x509Certificate.getValue()));
+                        } catch (CertificateException e) {
+                            LOGGER.error("Certificate is invalid " + x509Certificate.getValue());
+                        }
+                    }
+                }
+            }
+        }
+
+        return certificates;
+    }
+
+    private static BasicCredential getCertificate(String b64data) throws CertificateException {
+        byte[] decodedCertificate = DatatypeConverter.parseBase64Binary(b64data);
+        CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
+        Certificate certificate = certificateFactory.generateCertificate(new ByteArrayInputStream(decodedCertificate));
+
+        BasicCredential credential = new BasicCredential(certificate.getPublicKey());
+        credential.setEntityId(getInstance().getEntityID());
+
+        return credential;
     }
 
 }

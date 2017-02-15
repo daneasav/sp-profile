@@ -12,7 +12,7 @@ import java.util.List;
 
 public class UserSessionManager {
 
-    public static final String AUTHENTICATED_SESSION_ATTRIBUTE = "user.session.attribute";
+    public static final String AUTHENTICATED_SESSION_ATTRIBUTE = "saml.client.session.attribute";
 
     public static UserSession getUserSession(HttpServletRequest request) {
         return (UserSession) request.getSession().getAttribute(AUTHENTICATED_SESSION_ATTRIBUTE);
