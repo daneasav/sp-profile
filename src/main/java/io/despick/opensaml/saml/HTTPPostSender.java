@@ -1,8 +1,8 @@
 package io.despick.opensaml.saml;
 
 import io.despick.opensaml.error.SAMLClientException;
-import io.despick.opensaml.init.IDPMetadata;
-import io.despick.opensaml.init.SAMLConfigProperties;
+import io.despick.opensaml.config.IDPMetadata;
+import io.despick.opensaml.config.SAMLConfigProperties;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.velocity.SLF4JLogChute;
 import org.apache.velocity.app.VelocityEngine;

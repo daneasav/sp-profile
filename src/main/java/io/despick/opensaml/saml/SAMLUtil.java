@@ -1,6 +1,6 @@
 package io.despick.opensaml.saml;
 
-import io.despick.opensaml.init.SPMetadata;
+import io.despick.opensaml.config.SPMetadata;
 import net.shibboleth.utilities.java.support.security.RandomIdentifierGenerationStrategy;
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;

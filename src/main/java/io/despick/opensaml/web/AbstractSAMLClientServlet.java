@@ -1,7 +1,7 @@
 package io.despick.opensaml.web;
 
 import io.despick.opensaml.error.SAMLClientException;
-import io.despick.opensaml.init.SAMLConfigProperties;
+import io.despick.opensaml.config.SAMLConfigProperties;
 import io.despick.opensaml.session.UserSessionManager;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Response;

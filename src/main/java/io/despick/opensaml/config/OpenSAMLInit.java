@@ -1,4 +1,4 @@
-package io.despick.opensaml.init;
+package io.despick.opensaml.config;
 
 import org.opensaml.core.config.InitializationException;
 import org.opensaml.core.config.InitializationService;

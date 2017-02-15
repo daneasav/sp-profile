@@ -1,5 +1,6 @@
 package io.despick.opensaml.web;
 
+import io.despick.opensaml.saml.HTTPPostDecoder;
 import io.despick.opensaml.saml.HTTPRedirectDecoder;
 import io.despick.opensaml.session.UserSessionManager;
 import org.opensaml.saml.saml2.core.LogoutResponse;
@@ -22,6 +23,17 @@ public class SingleLogoutResponseServlet extends AbstractSAMLClientServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         LogoutResponse logoutResponse = HTTPRedirectDecoder.buildLogoutResponseFromRequest(request);
 
+        handleSLOResponse(request, response, logoutResponse);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        LogoutResponse logoutResponse = HTTPPostDecoder.buildLogoutResponseFromRequest(request);
+
+        handleSLOResponse(request, response, logoutResponse);
+    }
+
+    private void handleSLOResponse(HttpServletRequest request, HttpServletResponse response, LogoutResponse logoutResponse) {
         if (StatusCode.SUCCESS.equals(logoutResponse.getStatus().getStatusCode().getValue())) {
             LOGGER.info("Invalidate current session");
             UserSessionManager.removeUserSession(request);

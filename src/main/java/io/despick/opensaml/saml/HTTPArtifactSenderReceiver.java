@@ -1,7 +1,7 @@
 package io.despick.opensaml.saml;
 
 import io.despick.opensaml.error.SAMLClientException;
-import io.despick.opensaml.init.IDPMetadata;
+import io.despick.opensaml.config.IDPMetadata;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder;
 import org.opensaml.messaging.context.InOutOperationContext;

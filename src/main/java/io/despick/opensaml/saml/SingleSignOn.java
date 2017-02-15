@@ -1,28 +1,31 @@
 package io.despick.opensaml.saml;
 
-import io.despick.opensaml.init.IDPMetadata;
-import io.despick.opensaml.init.SPMetadata;
+import io.despick.opensaml.config.IDPMetadata;
+import io.despick.opensaml.config.SAMLConfigProperties;
+import io.despick.opensaml.config.SPMetadata;
 import org.joda.time.DateTime;
-import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.*;
+
+import java.util.EnumSet;
 
 public class SingleSignOn {
 
     public static AuthnRequest buildPassiveAuthnRequest() {
-        return buildPassiveAuthnRequest(AuthnContext.PPT_AUTHN_CTX);
+        return buildPassiveAuthnRequest(SAMLConfigProperties.getSSOAuthnContext());
     }
 
     public static AuthnRequest buildPassiveAuthnRequest(String authnContext) {
-        return buildAuthnRequest(SAMLConstants.SAML2_REDIRECT_BINDING_URI, SAMLConstants.SAML2_ARTIFACT_BINDING_URI,
+
+        return buildAuthnRequest(SAMLConfigProperties.getSSOBindingRequest(), SAMLConfigProperties.getSSOBindingResponse(),
             true, authnContext, AuthnContextComparisonTypeEnumeration.EXACT);
     }
 
     public static AuthnRequest buildAuthnRequest() {
-        return buildAuthnRequest(AuthnContext.PPT_AUTHN_CTX);
+        return buildAuthnRequest(SAMLConfigProperties.getSSOAuthnContext());
     }
 
     public static AuthnRequest buildAuthnRequest(String authnContext) {
-        return buildAuthnRequest(SAMLConstants.SAML2_REDIRECT_BINDING_URI, SAMLConstants.SAML2_ARTIFACT_BINDING_URI,
+        return buildAuthnRequest(SAMLConfigProperties.getSSOBindingRequest(), SAMLConfigProperties.getSSOBindingResponse(),
             false, authnContext, AuthnContextComparisonTypeEnumeration.EXACT);
     }
 

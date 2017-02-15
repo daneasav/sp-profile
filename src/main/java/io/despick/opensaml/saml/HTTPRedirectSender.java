@@ -1,7 +1,7 @@
 package io.despick.opensaml.saml;
 
-import io.despick.opensaml.init.IDPMetadata;
-import io.despick.opensaml.init.SAMLConfigProperties;
+import io.despick.opensaml.config.IDPMetadata;
+import io.despick.opensaml.config.SAMLConfigProperties;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.encoder.MessageEncodingException;

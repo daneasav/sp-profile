@@ -1,8 +1,6 @@
 package io.despick.opensaml.web;
 
-import io.despick.opensaml.saml.HTTPRedirectDecoder;
-import io.despick.opensaml.saml.HTTPRedirectSender;
-import io.despick.opensaml.saml.SingleLogout;
+import io.despick.opensaml.saml.*;
 import io.despick.opensaml.session.UserSession;
 import io.despick.opensaml.session.UserSessionManager;
 import org.opensaml.saml.saml2.core.LogoutRequest;
@@ -24,6 +22,21 @@ public class SingleLogoutServlet extends AbstractSAMLClientServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         LogoutRequest logoutRequest = HTTPRedirectDecoder.buildLogoutRequestFromRequest(request);
 
+        handleSLORequest(request, logoutRequest);
+
+        HTTPRedirectSender.sendLogoutResponseRedirectMessage(response, SingleLogout.buildLogoutResponse(logoutRequest.getID()));
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        LogoutRequest logoutRequest = HTTPPostDecoder.buildLogoutRequestFromRequest(request);
+
+        handleSLORequest(request, logoutRequest);
+
+        HTTPPostSender.sendLogoutResponsePostMessage(response, SingleLogout.buildLogoutResponse(logoutRequest.getID()));
+    }
+
+    private void handleSLORequest(HttpServletRequest request, LogoutRequest logoutRequest) {
         if (UserSessionManager.isUserSession(request)) {
             UserSession userSession = UserSessionManager.getUserSession(request);
 
@@ -38,8 +51,6 @@ public class SingleLogoutServlet extends AbstractSAMLClientServlet {
         }
 
         UserSessionManager.removeUserSession(request);
-
-        HTTPRedirectSender.sendLogoutResponseRedirectMessage(response, SingleLogout.buildLogoutResponse(logoutRequest.getID()));
     }
 
 }

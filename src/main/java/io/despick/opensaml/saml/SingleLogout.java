@@ -1,15 +1,15 @@
 package io.despick.opensaml.saml;
 
-import io.despick.opensaml.init.IDPMetadata;
+import io.despick.opensaml.config.IDPMetadata;
+import io.despick.opensaml.config.SAMLConfigProperties;
 import io.despick.opensaml.session.UserSession;
 import org.joda.time.DateTime;
-import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.*;
 
 public class SingleLogout {
 
     public static LogoutResponse buildLogoutResponse(String requestID) {
-        return buildLogoutResponse(requestID, SAMLConstants.SAML2_REDIRECT_BINDING_URI);
+        return buildLogoutResponse(requestID, SAMLConfigProperties.getSLOBinding());
     }
 
     public static LogoutResponse buildLogoutResponse(String requestID, String requestBinding) {
@@ -25,7 +25,7 @@ public class SingleLogout {
     }
 
     public static LogoutRequest buildLogoutRequest(UserSession userSession) {
-        return buildLogoutRequest(userSession, SAMLConstants.SAML2_REDIRECT_BINDING_URI);
+        return buildLogoutRequest(userSession, SAMLConfigProperties.getSLOBinding());
     }
 
     public static LogoutRequest buildLogoutRequest(UserSession userSession, String requestBinding) {

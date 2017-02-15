@@ -1,4 +1,4 @@
-package io.despick.opensaml.init;
+package io.despick.opensaml.config;
 
 import io.despick.opensaml.error.SAMLClientException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
