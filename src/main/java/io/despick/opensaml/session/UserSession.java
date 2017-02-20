@@ -20,6 +20,10 @@ public class UserSession {
     private String firstName;
     private String lastName;
 
+    //weka user properties
+    private String customerID;
+    private String userType;
+
     // anonymous user attributes
     private String anonymousUserID;
 
@@ -113,6 +117,22 @@ public class UserSession {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getCustomerID() {
+        return customerID;
+    }
+
+    public void setCustomerID(String customerID) {
+        this.customerID = customerID;
+    }
+
+    public String getUserType() {
+        return userType;
+    }
+
+    public void setUserType(String userType) {
+        this.userType = userType;
     }
 
     public String getAnonymousUserID() {

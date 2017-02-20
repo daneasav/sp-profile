@@ -75,6 +75,12 @@ public class UserSessionManager {
                         case "Email":
                             userSession.setEmail(getAttributeValue(attributeValues.get(0)));
                             break;
+                        case "customer_id":
+                            userSession.setCustomerID(getAttributeValue(attributeValues.get(0)));
+                            break;
+                        case "UserType":
+                            userSession.setUserType(getAttributeValue(attributeValues.get(0)));
+                            break;
                         case "ANONYMOUS_USERID":
                             userSession.setEmail(getAttributeValue(attributeValues.get(0)));
                             break;
